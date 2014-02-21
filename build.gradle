@@ -19,6 +19,9 @@ apply plugin: 'forge'
 
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
+def mavenuser = System.getenv("maven_user") ?: "1"
+def mavenpass = System.getenv("maven_pass") ?: "1"
+
 version = "MC1.7.2-v1.0." + buildnumber.toString()
 group= "net.petercashel.RealTime" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "RealTime"
@@ -50,8 +53,8 @@ repositories {
         maven {
             credentials {
                 // These have been set in the build server
-                username '$maven_user'
-                password '$maven_pass'
+                username mavenuser.toString()
+                password mavenpass.toString()
             }
             url "http://htb.petercashel.net:8125/repository/internal/"
         }
