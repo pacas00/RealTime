@@ -17,8 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version2 = "MC1.7.2-v1.0"
-version = '$version2.$JenkinsBUILD_NUMBER'
+version = 'MC1.7.2-v1.0.$BUILD_NUMBER'
 group= "net.petercashel.RealTime" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "RealTime"
 
