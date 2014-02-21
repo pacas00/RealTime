@@ -41,3 +41,16 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+apply plugin: 'maven-publish'
+
+repositories {
+        maven {
+            credentials {
+                // These have been set in the build server
+                username 'System.getenv()['maven_user']'
+                password 'System.getenv()['maven_pass']'
+            }
+            url "http://htb.petercashel.net:8125/"
+        }
+    }
