@@ -53,6 +53,6 @@ repositories {
                 username '$maven_user'
                 password '$maven_pass'
             }
-            url "http://htb.petercashel.net:8125/"
+            url "http://htb.petercashel.net:8125/repository/internal/"
         }
     }
