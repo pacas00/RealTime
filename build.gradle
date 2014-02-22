@@ -74,8 +74,6 @@ uploadArchives {
             logger.info('Publishing to files server')
             
             mavenDeployer {
-                configuration = configurations.deployJars
-
                 repository(url: "http://htb.petercashel.net:8125/") {
                     authentication(userName: $maven_user, password: $maven_pass)
                 }
