@@ -95,7 +95,7 @@ uploadArchives {
                     project {
                         name project.archivesBaseName
                         packaging 'jar'
-                        description 'IronChest'
+                        description 'RealTime'
                         url 'https://github.com/pacas00/RealTime'
 
                         scm {
