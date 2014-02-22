@@ -75,7 +75,7 @@ uploadArchives {
             
             mavenDeployer {
                 repository(url: "http://htb.petercashel.net:8125/") {
-                    authentication(userName: $maven_user, password: $maven_pass)
+                    authentication(userName: '$maven_user', password: '$maven_pass')
                 }
 
                 // This is just the pom data for the maven repo
