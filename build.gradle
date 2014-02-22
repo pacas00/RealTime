@@ -20,7 +20,7 @@ apply plugin: 'forge'
 
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
-version = "${project.minecraft.version}-v1.0." + buildnumber.toString()
+version = "v1.0." + buildnumber.toString()
 group= "net.petercashel.RealTime" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "RealTime"
 
