@@ -67,6 +67,9 @@ task deobfJar(type: Jar) {
 	from sourceSets.main.output
 	classifier = 'deobf'
     version = "${project.minecraft.version}-${project.version}"
+    manifest {
+        attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin")
+    }
 }
 
 // Tell the artifact system about our extra jars
