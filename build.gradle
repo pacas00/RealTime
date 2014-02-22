@@ -90,7 +90,7 @@ uploadArchives {
                 // This is just the pom data for the maven repo
                 pom {
                     groupId = project.group
-                    version = "${project.version}"
+                    version = "${project.minecraft.version}-${project.version}"
                     artifactId = project.archivesBaseName
                     project {
                         name project.archivesBaseName
