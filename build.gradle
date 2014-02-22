@@ -44,15 +44,83 @@ processResources
     }
 }
 
-apply plugin: 'maven-publish'
+jar {
+    classifier = 'universal'
+    version = "${project.minecraft.version}-${project.version}"
 
-repositories {
-        maven {
-            credentials {
-                // These have been set in the build server
-                username System.getenv("maven_user") ?: "1"
-                password System.getenv("maven_pass") ?: "1"
+}
+// Add in a source jar for people, should they desire to download such a thing
+task sourceJar(type: Jar) {
+	from sourceSets.main.allSource
+	classifier = 'src'
+    version = "${project.minecraft.version}-${project.version}"
+}
+
+// Add in an mcp named jar, for those who wish to run in a development environment (assuming mcp naming matches)
+task deobfJar(type: Jar) {
+	from sourceSets.main.output
+	classifier = 'deobf'
+    version = "${project.minecraft.version}-${project.version}"
+}
+
+// Tell the artifact system about our extra jars
+artifacts {
+	archives sourceJar, deobfJar
+}
+
+uploadArchives {
+    dependsOn 'reobf'
+    repositories {
+            logger.info('Publishing to files server')
+            
+            mavenDeployer {
+                configuration = configurations.deployJars
+
+                repository(url: "http://htb.petercashel.net:8125/") {
+                    authentication(userName: $maven_user, password: $maven_pass)
+                }
+
+                // This is just the pom data for the maven repo
+                pom {
+                    groupId = project.group
+                    // Force the maven upload to use the <mcversion>-<version> syntax preferred at files
+                    version = "${project.minecraft.version}-${project.version}"
+                    artifactId = project.archivesBaseName
+                    project {
+                        name project.archivesBaseName
+                        packaging 'jar'
+                        description 'IronChest'
+                        url 'https://github.com/pacas00/RealTime'
+
+                        scm {
+                            url 'https://github.com/pacas00/RealTime'
+                            connection 'scm:git:git://github.com/pacas00/RealTime.git'
+                            developerConnection 'scm:git:git@github.com:pacas00/RealTime.git'
+                        }
+
+                        issueManagement {
+                            system 'github'
+                            url 'https://github.com/pacas00/RealTime/issues'
+                        }
+
+                        licenses {
+                            license {
+                                name 'GNU Public License (GPL), Version 3.0'
+                                url 'http://www.gnu.org/licenses/gpl-3.0.txt'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'pacas00'
+                                name 'pacas00'
+                                roles { role 'developer' }
+                            }
+                        }
+                    }
+                }
             }
-            url "http://htb.petercashel.net:8125/repository/internal/"
-        }
+        
     }
+}
