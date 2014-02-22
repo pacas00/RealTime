@@ -15,11 +15,12 @@ buildscript {
     }
 }
 
+apply plugin: 'java'
 apply plugin: 'forge'
 
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
-version = "MC1.7.2-v1.0." + buildnumber.toString()
+version = "${project.minecraft.version}-v1.0." + buildnumber.toString()
 group= "net.petercashel.RealTime" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "RealTime"
 
@@ -49,6 +50,9 @@ processResources
 jar {
     classifier = 'universal'
     version = "${project.minecraft.version}-${project.version}"
+    manifest {
+        attributes("FMLCorePlugin": net.petercashel.RealTime.RealTimeFMLLoadingPlugin")
+    }
 
 }
 // Add in a source jar for people, should they desire to download such a thing
@@ -83,8 +87,7 @@ uploadArchives {
                 // This is just the pom data for the maven repo
                 pom {
                     groupId = project.group
-                    // Force the maven upload to use the <mcversion>-<version> syntax preferred at files
-                    version = "${project.minecraft.version}-${project.version}"
+                    version = "${project.version}"
                     artifactId = project.archivesBaseName
                     project {
                         name project.archivesBaseName
