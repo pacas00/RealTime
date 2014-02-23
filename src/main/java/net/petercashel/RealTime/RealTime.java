@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import net.minecraft.client.Minecraft;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -95,11 +96,10 @@ public class RealTime {
 		return WorldTime;    		
 	}
 
-	public static String DateEngine(String dateFormat) {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-		return sdf.format(cal.getTime());
-
+	public static int DateEngine(int output) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(mod_RealTime.tzName));
+		System.out.println(cal.getTimeZone());
+		return cal.get(output);
 	}
 
 	public static int TimeCalculator() {
@@ -108,13 +108,11 @@ public class RealTime {
 			System.out.println("Calculating..");
 		}
 		int TimeCalculated = 0;
-		String Hours_ = DateEngine("H");
-		int Hours = Integer.parseInt(Hours_);
+		int Hours = DateEngine(java.util.Calendar.HOUR_OF_DAY);
 		if (RTDebug == true) {
 			System.out.println(Hours);
 		}
-		String Minutes_ = DateEngine("mm");		
-		int Minutes = Integer.parseInt(Minutes_);
+		int Minutes = DateEngine(java.util.Calendar.MINUTE);
 		if (RTDebug == true) {
 			System.out.println(Minutes);
 		}
@@ -152,13 +150,10 @@ public class RealTime {
 		TimeCalculated = Integer.parseInt(Time);
 		TimeCalculated = TimeCalculated * 10;
 
-		int offset = mod_RealTime.RealTimeOffset * 1000;
-
 		if (RTDebug == true) {
 			System.out.println(TimeCalculated);
 		}
 
-		TimeCalculated = TimeCalculated + offset;
 		if (TimeCalculated >= 24001) {
 			TimeCalculated = (TimeCalculated - 24000);
 		}

@@ -18,7 +18,7 @@ public class ClientPacketHandlerLogin {
 		ByteBufInputStream bbis = new ByteBufInputStream(event.packet.payload());
 
 		try {
-			mod_RealTime.RealTimeOffset = bbis.readInt();
+			mod_RealTime.RealTimeZone = bbis.readInt();
 			mod_RealTime.ClientTimeEnabled = bbis.readBoolean();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

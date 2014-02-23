@@ -1,6 +1,7 @@
 package net.petercashel.RealTime;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.apache.logging.log4j.Level;
 
@@ -31,15 +32,17 @@ public class mod_RealTime {
 	//RealTime Stuff
 
 	public static boolean RealTimeEnabled;
-	public static int RealTimeOffset = 0;
+	public static String tzName;
+	public static int RealTimeZone = 0;
+	public static int RealTimeZoneOriginal;
 
+	
 	public static float ClientTime = 3000F;
 	public static boolean ClientTimeEnabled = false;
 
 	// Used server side to not spam the client with packets from this mod.
 	public static int ServerNoSpamCounter = 0;
-	public static int RealTimeOffsetOriginal;
-
+	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
@@ -52,7 +55,7 @@ public class mod_RealTime {
 	public void ServerStopped(FMLServerStoppingEvent event) 
 	{
 		mod_RealTime.ClientTimeEnabled = false;
-		mod_RealTime.RealTimeOffset = mod_RealTime.RealTimeOffsetOriginal;
+		mod_RealTime.RealTimeZone = mod_RealTime.RealTimeZoneOriginal;
 	}
 
 
@@ -69,8 +72,18 @@ public class mod_RealTime {
 		try {
 			cfg.load();
 			RealTimeEnabled = cfg.get(CATEGORY_GENERAL,"ReadTimeEnabled", false).getBoolean(false);
-			RealTimeOffset = cfg.get(CATEGORY_GENERAL,"RealTime_TimeZone_GMT", 0).getInt();
-			RealTimeOffsetOriginal = RealTimeOffset;
+			
+			Calendar cal = Calendar.getInstance();
+			TimeZone tz = TimeZone.getDefault();
+			
+			tzName = cfg.get(CATEGORY_GENERAL,"RealTime_TimeZone_Name", cal.getTimeZone().getDisplayName()).getString();;
+			
+			tz = TimeZone.getTimeZone(tzName);
+			cal.setTimeZone(tz);
+			
+			RealTimeZone = cal.getTimeZone().getRawOffset();
+			
+			RealTimeZoneOriginal = RealTimeZone;
 
 
 		} catch (Exception e) {
