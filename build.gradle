@@ -51,7 +51,7 @@ jar {
     classifier = 'universal'
     version = "${project.minecraft.version}-${project.version}"
     manifest {
-        attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin")
+        attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
     }
 
 }
