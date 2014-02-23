@@ -17,7 +17,6 @@ public class ClientPacketHandlerLogin {
 	public void onClientPacket(ClientCustomPacketEvent event) {
 		ByteBufInputStream bbis = new ByteBufInputStream(event.packet.payload());
 
-		System.out.println("CLIENT GOT Login PACKET!!");
 		try {
 			mod_RealTime.RealTimeOffset = bbis.readInt();
 			mod_RealTime.ClientTimeEnabled = bbis.readBoolean();

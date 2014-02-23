@@ -18,7 +18,6 @@ public class ServerPacketHandlerConnect {
 
 	@SubscribeEvent
 	public void onServerPacket(ServerCustomPacketEvent event) {
-		System.out.println("SERVER GOT Connect PACKET!!");
 		ByteBuf bb = buffer(128);
 		bb.writeInt(mod_RealTime.RealTimeOffset);
 		bb.writeBoolean(mod_RealTime.RealTimeEnabled);

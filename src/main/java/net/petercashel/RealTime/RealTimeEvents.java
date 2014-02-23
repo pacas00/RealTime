@@ -22,12 +22,9 @@ public class RealTimeEvents {
 	{
 		mod_RealTime.ClientTimeEnabled = false;
 		mod_RealTime.RealTimeOffset = mod_RealTime.RealTimeOffsetOriginal;
-		System.out.println("ON CONNECT");
-
 		TimerTask ConnectPacket = new TimerTask(){
 
 			public void run() {
-				System.out.println("Timer Fired!");
 				ByteBuf bb = buffer(128);
 				bb.writeBoolean(true);
 				FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealTimeConnect");
