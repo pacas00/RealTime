@@ -21,6 +21,7 @@ public class ClientPacketHandler {
 		
 		try {
 			mod_RealTime.ClientTime = bbis.readFloat();
+			mod_RealTime.ServerTime = mod_RealTime.ClientTime;
 			mod_RealTime.ClientTimeEnabled = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

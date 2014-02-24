@@ -27,7 +27,8 @@ public class RealTime {
 		if (mod_RealTime.RealTimeEnabled) {
 			if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
 
-				float WorldTime = (((float) TimeCalculator()) / 24000.0F) - 0.25F; 
+				float WorldTime = (((float) TimeCalculator()) / 24000.0F) - 0.25F;
+				mod_RealTime.ServerTime = WorldTime;
 
 
 				if (mod_RealTime.ServerNoSpamCounter < 500) {
@@ -35,7 +36,7 @@ public class RealTime {
 				} else {
 					ByteBuf bb = buffer(128);
 					bb.clear();
-					bb.setFloat(0, WorldTime);
+					bb.writeFloat(WorldTime);
 					FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealTime");
 					mod_RealTime.Channel.sendToAll(pkt);
 					mod_RealTime.ServerNoSpamCounter = 0;
@@ -93,35 +94,22 @@ public class RealTime {
 	public static float calculateRealTime()
 	{
 		float WorldTime = (((float) TimeCalculator()) / 24000.0F) - 0.25F; 
+		mod_RealTime.ServerTime = WorldTime;
 		return WorldTime;    		
 	}
 
 	public static int DateEngine(int output) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(mod_RealTime.tzName));
-		System.out.println(cal.getTimeZone());
 		return cal.get(output);
 	}
 
 	public static int TimeCalculator() {
-		boolean RTDebug = false;
-		if (RTDebug == true) {
-			System.out.println("Calculating..");
-		}
 		int TimeCalculated = 0;
 		int Hours = DateEngine(java.util.Calendar.HOUR_OF_DAY);
-		if (RTDebug == true) {
-			System.out.println(Hours);
-		}
 		int Minutes = DateEngine(java.util.Calendar.MINUTE);
-		if (RTDebug == true) {
-			System.out.println(Minutes);
-		}
 		Hours = Hours - 6;
 		if (Hours < 0) {
 			Hours = 24 + Hours;
-		}
-		if (RTDebug == true) {
-			System.out.println(Hours);
 		}
 		String Time = "";
 
@@ -144,38 +132,19 @@ public class RealTime {
 		}
 
 
-		if (RTDebug == true) {
-			System.out.println(Time);
-		}
 		TimeCalculated = Integer.parseInt(Time);
 		TimeCalculated = TimeCalculated * 10;
-
-		if (RTDebug == true) {
-			System.out.println(TimeCalculated);
-		}
-
 		if (TimeCalculated >= 24001) {
 			TimeCalculated = (TimeCalculated - 24000);
 		}
-
-		if (RTDebug == true) {
-			System.out.println(TimeCalculated);
-		}
-
 		if (TimeCalculated <= 0) {
 			TimeCalculated = (24000 - TimeCalculated);
 		}
-		if (RTDebug == true) {
-			System.out.println(TimeCalculated);
-		}
 		if (TimeCalculated >= 24001) {
 			TimeCalculated = (TimeCalculated - 24000);
 		}
 
-		if (RTDebug == true) {
-			System.out.println(TimeCalculated);
-		}
-
+		
 		return TimeCalculated;
 	}
 

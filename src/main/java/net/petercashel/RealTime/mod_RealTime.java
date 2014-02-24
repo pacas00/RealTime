@@ -5,19 +5,26 @@ import java.util.TimeZone;
 
 import org.apache.logging.log4j.Level;
 
+import net.minecraft.block.Block;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
 @Mod(modid = "mod_realtime", name = "RealTime", version = "ver.@@@.@@@.@@@.@@@")
 public class mod_RealTime {
+	
+	@Instance("mod_RealTime")
+	public static mod_RealTime instance;
 
 	public static FMLEventChannel Channel;
 	public static FMLEventChannel ChannelConnect;
@@ -35,17 +42,23 @@ public class mod_RealTime {
 	public static String tzName;
 	public static int RealTimeZone = 0;
 	public static int RealTimeZoneOriginal;
+	public static String WeatherAPIKEY = "";
+	public static String WeatherLocation = "";
 
 	
+	public static float ServerTime = 0F;
 	public static float ClientTime = 3000F;
 	public static boolean ClientTimeEnabled = false;
 
 	// Used server side to not spam the client with packets from this mod.
 	public static int ServerNoSpamCounter = 0;
 	
+	public static Block weatherMan;
+	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
+		GameRegistry.registerTileEntity(TileEntityweatherMan.class, "weatherManTE");
 		System.out.println("[RealTime] Loaded.");
 		FMLLog.log("RealTime", Level.INFO, "Mod Has Loaded [RealTime]");
 	}
@@ -85,13 +98,18 @@ public class mod_RealTime {
 			
 			RealTimeZoneOriginal = RealTimeZone;
 
-
+			WeatherAPIKEY = cfg.get(CATEGORY_GENERAL,"WeatherAPIKEY", "").getString();
+			WeatherLocation = cfg.get(CATEGORY_GENERAL,"WeatherLocation", "").getString();
+			
 		} catch (Exception e) {
 			System.out.println("[RealTime] Error Loading Config");
 		} finally {
 			cfg.save();
 		}
 		FMLCommonHandler.instance().bus().register(new RealTimeEvents());
+		
+		weatherMan = new BlockweatherMan();
+		GameRegistry.registerBlock(weatherMan, "weatherMan");
 
 	}
 
