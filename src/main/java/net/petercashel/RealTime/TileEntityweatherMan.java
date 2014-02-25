@@ -58,9 +58,6 @@ public class TileEntityweatherMan extends TileEntity {
 			} else {
 				worldObj.getWorldInfo().setRaining(false);
 			}
-		
-			BlockweatherMan.UpdateFunc(worldObj);
-		
 		}
 		if (time > 12000) {
 			time = 0;

@@ -23,10 +23,4 @@ public class BlockweatherMan extends BlockContainer {
 	public TileEntity createNewTileEntity(World world, int var2) {
 		return new TileEntityweatherMan();
 	}
-
-	
-	public static void UpdateFunc(World worldObj) {
-		// TODO Auto-generated method stub
-		worldObj.setWorldTime(Math.round(mod_RealTime.ServerTime));
-	}
 }

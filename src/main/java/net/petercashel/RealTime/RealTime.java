@@ -27,8 +27,9 @@ public class RealTime {
 		if (mod_RealTime.RealTimeEnabled) {
 			if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
 
-				float WorldTime = (((float) TimeCalculator()) / 24000.0F) - 0.25F;
-				mod_RealTime.ServerTime = WorldTime;
+				float Time = TimeCalculator() + 10000;
+				float WorldTime = Time;
+				mod_RealTime.ServerTime = Time;
 
 
 				if (mod_RealTime.ServerNoSpamCounter < 500) {
@@ -93,9 +94,7 @@ public class RealTime {
 
 	public static float calculateRealTime()
 	{
-		float WorldTime = (((float) TimeCalculator()) / 24000.0F) - 0.25F; 
-		mod_RealTime.ServerTime = WorldTime;
-		return WorldTime;    		
+		return calculateRealTime(1L,1f);    		
 	}
 
 	public static int DateEngine(int output) {
@@ -103,49 +102,11 @@ public class RealTime {
 		return cal.get(output);
 	}
 
-	public static int TimeCalculator() {
-		int TimeCalculated = 0;
+	public static float TimeCalculator() {
 		int Hours = DateEngine(java.util.Calendar.HOUR_OF_DAY);
 		int Minutes = DateEngine(java.util.Calendar.MINUTE);
-		Hours = Hours - 6;
-		if (Hours < 0) {
-			Hours = 24 + Hours;
-		}
-		String Time = "";
-
-		if (Hours == 0) {
-			if (Minutes < 10) {
-				Time = new StringBuilder().append("0").append(Hours).append("0").append(Minutes).toString();
-			}
-			else
-			{
-				Time = new StringBuilder().append("0").append(Hours).append(Minutes).toString();
-			}
-		} else {
-			if (Minutes < 10) {
-				Time = new StringBuilder().append(Hours).append("0").append(Minutes).toString();
-			}
-			else
-			{
-				Time = new StringBuilder().append(Hours).append(Minutes).toString();
-			}
-		}
-
-
-		TimeCalculated = Integer.parseInt(Time);
-		TimeCalculated = TimeCalculated * 10;
-		if (TimeCalculated >= 24001) {
-			TimeCalculated = (TimeCalculated - 24000);
-		}
-		if (TimeCalculated <= 0) {
-			TimeCalculated = (24000 - TimeCalculated);
-		}
-		if (TimeCalculated >= 24001) {
-			TimeCalculated = (TimeCalculated - 24000);
-		}
-
-		
-		return TimeCalculated;
+		float total_sec = (Hours*60*60)+(Minutes*60); //0 - 86400 seconds 0-24000 ticks
+		return ((total_sec/86400)*24000);
 	}
 
 
