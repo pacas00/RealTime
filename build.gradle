@@ -9,9 +9,14 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            name = "htb.petercashel.net"
+            url = "http://htb.petercashel.net:8125/repository/internal/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath 'net.petercashel.PacasStuff:PacasStuff:1.7.2-v1.0.6'
     }
 }
 

@@ -1,17 +1,25 @@
 package net.petercashel.RealTime;
 
+import cpw.mods.fml.common.Loader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.petercashel.PacasStuff.mod_PacasStuff;
 
 public class BlockweatherMan extends BlockContainer {
 
 	protected BlockweatherMan() {
 		super(Material.iron);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		
+		if (Loader.isModLoaded("mod_pacasstuff"))
+		{
+			setCreativeTab(mod_PacasStuff.tabPacasStuff);
+		} else {
+			setCreativeTab(CreativeTabs.tabRedstone);
+		}
 		setHardness(-1F);
 		setBlockName("weatherMan");
 		setBlockTextureName("RealTime:"+getUnlocalizedName());
