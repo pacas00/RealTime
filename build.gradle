@@ -68,6 +68,7 @@ jar {
 }
 task universalJar(type: Jar) {
 	classifier = 'universal'
+    from sourceSets.main.output
     version = "${project.minecraft.version}-${project.version}"
     manifest {
         attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
