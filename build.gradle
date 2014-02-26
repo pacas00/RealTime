@@ -25,6 +25,12 @@ apply plugin: 'java'
 dependencies {
   compile 'net.petercashel.PacasStuff:PacasStuff:1.7.2-v1.0.7'
 }
+repositories {
+        maven {
+            name = "htb.petercashel.net"
+            url = "http://htb.petercashel.net:8125/repository/internal/"
+        }
+    }
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
 version = "v1.0." + buildnumber.toString()
