@@ -19,7 +19,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 
-@Mod(modid = "mod_realtime", name = "RealTime", version = "ver.@@@.@@@.@@@.@@@")
+@Mod(modid = "mod_realtime", name = "RealTime")
 public class mod_RealTime {
 	
 	@Instance("mod_RealTime")
