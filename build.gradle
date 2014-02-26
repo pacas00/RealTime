@@ -16,7 +16,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
-        classpath 'net.petercashel.PacasStuff:PacasStuff:1.7.2-v1.0.7'
+        compile 'net.petercashel.PacasStuff:PacasStuff:1.7.2-v1.0.7'
     }
 }
 
@@ -53,12 +53,17 @@ processResources
 }
 
 jar {
-    classifier = 'universal'
     version = "${project.minecraft.version}-${project.version}"
     manifest {
         attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
     }
-
+}
+task universalJar(type: Jar) {
+	classifier = 'universal'
+    version = "${project.minecraft.version}-${project.version}"
+    manifest {
+        attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
+    }
 }
 // Add in a source jar for people, should they desire to download such a thing
 task sourceJar(type: Jar) {
@@ -79,7 +84,7 @@ task deobfJar(type: Jar) {
 
 // Tell the artifact system about our extra jars
 artifacts {
-	archives sourceJar, deobfJar
+	archives universalJar,sourceJar, deobfJar
 }
 
 uploadArchives {
