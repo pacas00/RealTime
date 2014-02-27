@@ -62,14 +62,7 @@ processResources
 
 jar {
     version = "${project.minecraft.version}-${project.version}"
-    manifest {
-        attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
-    }
-}
-task universalJar(type: Jar) {
-	classifier = 'universal'
-    from sourceSets.main.output
-    version = "${project.minecraft.version}-${project.version}"
+    classifier = 'universal'
     manifest {
         attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
     }
@@ -91,13 +84,30 @@ task deobfJar(type: Jar) {
     }
 }
 
+task PomJar(type: Jar) {
+	from sourceSets.main.output
+	version = "${project.minecraft.version}-${project.version}"
+}
+
 // Tell the artifact system about our extra jars
 artifacts {
-	archives universalJar,sourceJar, deobfJar
+	archives sourceJar, deobfJar, PomJar
+}
+
+task copyFiles(type: Copy) {
+    dependsOn 'reobf','PomJar'
+    
+    def inputFile = project.archivesBaseName + '-' + project.minecraft.version + '-' + project.version + '-universal.jar'
+    def outputFile = project.archivesBaseName + '-' + project.minecraft.version + '-' + project.version + '.jar'
+    
+    from ('build/libs/')
+    into ('build/libs/')
+    include (inputFile)
+    rename (inputFile, outputFile)
 }
 
 uploadArchives {
-    dependsOn 'reobf'
+    dependsOn 'reobf', 'copyFiles'
     repositories {
             logger.info('Publishing to files server')
             
