@@ -6,12 +6,15 @@ import java.util.TimeZone;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
@@ -43,7 +46,7 @@ public class mod_RealTime {
 	public static int RealTimeZoneOriginal;
 	public static String WeatherAPIKEY = "";
 	public static String WeatherLocation = "";
-
+	public static boolean EnforceSync = false;
 	
 	public static float ServerTime = 0F;
 	public static float ClientTime = 3000F;
@@ -53,6 +56,10 @@ public class mod_RealTime {
 	public static int ServerNoSpamCounter = 0;
 	
 	public static Block weatherMan;
+
+	private TimeSyncCommand TimeSyncCMD;
+
+	private MinecraftServer server;
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
@@ -75,15 +82,20 @@ public class mod_RealTime {
 	public void ServerStarting(FMLServerStartingEvent event) 
 	{
 		mod_RealTime.ChannelConnect.register(new ServerPacketHandlerConnect());
+		
+		server = MinecraftServer.getServer();
+		ServerCommandManager commands = (ServerCommandManager) server.getCommandManager();
+		TimeSyncCMD = new TimeSyncCommand(this);
+		commands.registerCommand(TimeSyncCMD);
 	}
-
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
 		try {
 			cfg.load();
-			RealTimeEnabled = cfg.get(CATEGORY_GENERAL,"ReadTimeEnabled", false).getBoolean(false);
+			RealTimeEnabled = cfg.get(CATEGORY_GENERAL,"RealTimeEnabled", false).getBoolean(false);
+			EnforceSync = cfg.get(CATEGORY_GENERAL,"EnforceSync", false).getBoolean(false);
 			
 			Calendar cal = Calendar.getInstance();
 			TimeZone tz = TimeZone.getDefault();

@@ -27,6 +27,12 @@ public class ClientPacketHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		try {
+			bbis.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }

@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class TileEntityweatherMan extends TileEntity {
 	
@@ -20,7 +21,24 @@ public class TileEntityweatherMan extends TileEntity {
 	public void updateEntity() {
 		time++;
 		if (time == 20 && mod_RealTime.WeatherAPIKEY.isEmpty() == false && mod_RealTime.WeatherLocation.isEmpty() == false ) {
-			URL url = null;
+			Thread weather = new WeatherTask(worldObj);
+			weather.start();
+		}
+		if (time > 12000) {
+			time = 0;
+		}
+		
+		
+	}
+	
+	public class WeatherTask extends Thread {
+
+		private World wor;
+	    public WeatherTask(World worl) {
+			wor = worl;
+		}
+		public void run() {
+	        URL url = null;
 			try {
 				url = new URL("http://api.worldweatheronline.com/free/v1/weather.ashx?key="+mod_RealTime.WeatherAPIKEY+"&num_of_days=1&q="+mod_RealTime.WeatherLocation+"&format=json");
 			} catch (MalformedURLException e1) {
@@ -54,16 +72,12 @@ public class TileEntityweatherMan extends TileEntity {
 					get("weatherCode").getAsInt();
 			int[] array = { 395, 392, 389, 386, 377, 374, 371, 368, 365, 362, 359, 356, 353, 350, 338, 335, 332, 329, 326, 314, 311, 308, 305, 302, 299, 284, 281 };
 			if (Arrays.asList(array).contains(weatherCode)) {
-				worldObj.getWorldInfo().setRaining(true);
+				wor.getWorldInfo().setRaining(true);
 			} else {
-				worldObj.getWorldInfo().setRaining(false);
+				wor.getWorldInfo().setRaining(false);
 			}
-		}
-		if (time > 12000) {
-			time = 0;
-		}
-		
-		
+	    }
+
 	}
 
 }
