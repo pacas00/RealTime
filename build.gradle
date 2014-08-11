@@ -22,15 +22,15 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: 'java'
 
-dependencies {
-  compile 'net.petercashel.PacasStuff:PacasStuff:1.7.10-v1.0.7'
-}
-repositories {
-        maven {
-            name = "archiva.petercashel.net"
-            url = "http://117.120.47.2:8110/repository/internal/"
-        }
-    }
+//dependencies {
+//  compile 'net.petercashel.PacasStuff:PacasStuff:1.7.10-v1.0.7'
+//}
+//repositories {
+//        maven {
+//            name = "archiva.petercashel.net"
+//            url = "http://117.120.47.2:8110/repository/internal/"
+//        }
+//    }
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
 version = "v1.0." + buildnumber.toString()
