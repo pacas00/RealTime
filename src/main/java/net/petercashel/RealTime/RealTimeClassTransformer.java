@@ -48,7 +48,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 			//calculateCelestialAngle
 			targetMethodName ="a";
 			//getMoonPhase
-			targetMethodName2 ="d"; // b or d _ not sure...
+			targetMethodName2 ="a"; // b or d _ not sure...  ..? a?
 		} else {
 			targetMethodName ="calculateCelestialAngle";
 			targetMethodName2 ="getMoonPhase";
