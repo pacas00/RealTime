@@ -1,8 +1,6 @@
 RealTime
 -----------
 
-MC 1.7.2 branch of pacas00's RealTime
+For Minecraft 1.7.10
 
-For Minecraft 1.7.2
-
-<a href='http://me.petercashel.net:8123/job/RealTime/'><img src='http://me.petercashel.net:8123/buildStatus/icon?job=RealTime'></a>
+<a href='http://jenkins.petercashel.net/job/RealTime/'><img src='http://jenkins.petercashel.net/buildStatus/icon?job=RealTime'></a>

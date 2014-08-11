@@ -18,7 +18,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 	@Override
 	public byte[] transform(String arg0, String arg1, byte[] arg2) {
 		
-		if (arg0.equals("apa")) {
+		if (arg0.equals("aqo")) {
 		//	System.out.println("********* INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASM(arg0, arg2, true);
         }
@@ -35,7 +35,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 		 	String targetMethodName = "";
 	        
 	        if(obfuscated == true)
-	        	targetMethodName ="a";
+	        	targetMethodName ="func_76563_a";
 	        else
 	        	targetMethodName ="calculateCelestialAngle";
 	        
@@ -72,6 +72,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 //                    INVOKESTATIC net/petercashel/RealTime/RealTime.calculateRealTime (JF)F
 //                    FRETURN
 
+					//m.instructions.size()
 	                m.instructions.clear();
 	                m.instructions.add(toInject);
 	                
