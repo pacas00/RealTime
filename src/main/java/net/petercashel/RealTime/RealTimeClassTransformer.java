@@ -35,7 +35,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 		 	String targetMethodName = "";
 	        
 	        if(obfuscated == true)
-	        	targetMethodName ="func_76563_a";
+	        	targetMethodName ="a";
 	        else
 	        	targetMethodName ="calculateCelestialAngle";
 	        
