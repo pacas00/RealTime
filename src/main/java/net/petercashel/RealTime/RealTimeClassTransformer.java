@@ -17,19 +17,19 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class RealTimeClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 	
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	@Override
 	public byte[] transform(String arg0, String arg1, byte[] arg2) {
 
 
 		if (arg0.equals("aqo")) {
-			if (debug) FMLRelaunchLog.warning("********* INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0, new Object[0]);
+			if (debug) System.out.println("*********RealTime INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASM(arg0, arg2, true);
 		}
 
 		if (arg0.equals("net.minecraft.world.WorldProvider")) {
-			if (debug) FMLRelaunchLog.warning("********* INSIDE WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0, new Object[0]);
+			if (debug) System.out.println("*********RealTime INSIDE WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASM(arg0, arg2, false);
 		}
 
@@ -68,10 +68,10 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 		while(methods.hasNext())
 		{
 			MethodNode m = methods.next();
-			if (debug) FMLRelaunchLog.warning("********* Method Name: "+m.name + " Desc:" + m.desc, new Object[0]);
+			if (debug) System.out.println("*********RealTime Method Name: "+m.name + " Desc:" + m.desc);
 
 			if (m.name.equals(targetMethodName) && m.desc.equals("(JF)F")) {
-				if (debug) FMLRelaunchLog.warning("********* Inside target method!", new Object[0]);
+				if (debug) System.out.println("*********RealTime Inside target method!");
 
 				InsnList toInject = new InsnList();
 
@@ -89,11 +89,11 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 				m.instructions.add(toInject);
 
 
-				if (debug) FMLRelaunchLog.warning("Patching Complete!", new Object[0]);
+				if (debug) System.out.println("RealTime Patching Complete!");
 			}
 
 			if (m.name.equals(targetMethodName2) && m.desc.equals("(J)I")) {
-				if (debug) FMLRelaunchLog.warning("********* Inside target method!", new Object[0]);
+				if (debug) System.out.println("*********RealTime Inside target method!");
 
 				InsnList toInject = new InsnList();
 
@@ -110,7 +110,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 				m.instructions.add(toInject);
 
 
-				if (debug) FMLRelaunchLog.warning("Patching Complete!", new Object[0]);
+				if (debug) System.out.println("RealTime Patching Complete!");
 			}
 
 
