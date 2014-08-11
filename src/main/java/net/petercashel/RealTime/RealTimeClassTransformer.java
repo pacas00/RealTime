@@ -44,7 +44,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 			//calculateCelestialAngle
 			targetMethodName ="a";
 			//getMoonPhase
-			targetMethodName2 ="b"; // b or d _ not sure...
+			targetMethodName2 ="d"; // b or d _ not sure...
 		} else {
 			targetMethodName ="calculateCelestialAngle";
 			targetMethodName2 ="getMoonPhase";
@@ -64,7 +64,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 		while(methods.hasNext())
 		{
 			MethodNode m = methods.next();
-			// System.out.println("********* Method Name: "+m.name + " Desc:" + m.desc);
+			System.out.println("********* Method Name: "+m.name + " Desc:" + m.desc);
 
 			if (m.name.equals(targetMethodName) && m.desc.equals("(JF)F")) {
 				//System.out.println("********* Inside target method!");
@@ -90,7 +90,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 			}
 
 			if (m.name.equals(targetMethodName2) && m.desc.equals("(J)I")) {
-				//System.out.println("********* Inside target method!");
+				System.out.println("********* Inside target method!");
 
 				InsnList toInject = new InsnList();
 
