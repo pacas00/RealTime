@@ -72,7 +72,7 @@ public class TimeSyncCommand extends CommandBase
 		// From Offical Wiki
 		// Minecraft time is exactly 72 times faster than normal time.
 		// This can be easily calculated as the proportion 1440/20 = 72,
-		// as there are 1440 minutes in a real day (60 × 24)
+		// as there are 1440 minutes in a real day (60 * 24)
 		// and 20 minutes in a full Minecraft day
 
 		long l = 1728000L;
