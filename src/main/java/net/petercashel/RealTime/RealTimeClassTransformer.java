@@ -12,6 +12,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
+
 
 public class RealTimeClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 
@@ -20,12 +22,12 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 
 
 		if (arg0.equals("aqo")) {
-			//	System.out.println("********* INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
+			FMLRelaunchLog.warning("********* INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0, new Object[0]);
 			return patchClassASM(arg0, arg2, true);
 		}
 
 		if (arg0.equals("net.minecraft.world.WorldProvider")) {
-			//	System.out.println("********* INSIDE WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
+			FMLRelaunchLog.warning("********* INSIDE WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0, new Object[0]);
 			return patchClassASM(arg0, arg2, false);
 		}
 
@@ -64,33 +66,33 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 		while(methods.hasNext())
 		{
 			MethodNode m = methods.next();
-			System.out.println("********* Method Name: "+m.name + " Desc:" + m.desc);
+			FMLRelaunchLog.warning("********* Method Name: "+m.name + " Desc:" + m.desc, new Object[0]);
 
-			if (m.name.equals(targetMethodName) && m.desc.equals("(JF)F")) {
-				//System.out.println("********* Inside target method!");
-
-				InsnList toInject = new InsnList();
-
-				toInject.add(new VarInsnNode(Opcodes.LLOAD, 1));
-				toInject.add(new VarInsnNode(Opcodes.FLOAD, 3));
-				toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealTime", "calculateRealTime", "(JF)F"));
-				toInject.add(new InsnNode(Opcodes.FRETURN));
-
-				//	                    LLOAD 1
-				//	                    FLOAD 3
-				//	                    INVOKESTATIC net/petercashel/RealTime/RealTime.calculateRealTime (JF)F
-				//	                    FRETURN
-
-				m.instructions.clear();
-				m.instructions.add(toInject);
-
-
-				System.out.println("Patching Complete!");
-				break;
-			}
+//			if (m.name.equals(targetMethodName) && m.desc.equals("(JF)F")) {
+//				FMLRelaunchLog.warning("********* Inside target method!", new Object[0]);
+//
+//				InsnList toInject = new InsnList();
+//
+//				toInject.add(new VarInsnNode(Opcodes.LLOAD, 1));
+//				toInject.add(new VarInsnNode(Opcodes.FLOAD, 3));
+//				toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealTime", "calculateRealTime", "(JF)F"));
+//				toInject.add(new InsnNode(Opcodes.FRETURN));
+//
+//				//	                    LLOAD 1
+//				//	                    FLOAD 3
+//				//	                    INVOKESTATIC net/petercashel/RealTime/RealTime.calculateRealTime (JF)F
+//				//	                    FRETURN
+//
+//				m.instructions.clear();
+//				m.instructions.add(toInject);
+//
+//
+//				FMLRelaunchLog.warning("Patching Complete!", new Object[0]);
+//				break;
+//			}
 
 			if (m.name.equals(targetMethodName2) && m.desc.equals("(J)I")) {
-				System.out.println("********* Inside target method!");
+				FMLRelaunchLog.warning("********* Inside target method!", new Object[0]);
 
 				InsnList toInject = new InsnList();
 
@@ -107,7 +109,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 				m.instructions.add(toInject);
 
 
-				System.out.println("Patching Complete!");
+				FMLRelaunchLog.warning("Patching Complete!", new Object[0]);
 				break;	            		
 			}
 
