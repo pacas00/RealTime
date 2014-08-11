@@ -1,3 +1,10 @@
+
+## ForgeGradle
+
+.gradle/
+eclipse
+
+
 #################
 ## Eclipse
 #################
