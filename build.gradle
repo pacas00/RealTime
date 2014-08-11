@@ -23,7 +23,7 @@ apply plugin: 'forge'
 apply plugin: 'java'
 
 dependencies {
-  compile 'net.petercashel.PacasStuff:PacasStuff:1.7.10-v1.0.6'
+  compile 'net.petercashel.PacasStuff:PacasStuff:1.7.10-v1.0.7'
 }
 repositories {
         maven {
