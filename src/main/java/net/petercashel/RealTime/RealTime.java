@@ -16,6 +16,14 @@ import static io.netty.buffer.Unpooled.*;
 public class RealTime {
 	public static float WorldTime;
 
+	
+	public static int getMoonPhase(long par1) {
+		if (mod_RealTime.RealTimeEnabled) { 
+			return (int)(par1 / 1728000L % 8L + 8L) % 8;
+		} else {
+			return (int)(par1 / 24000L % 8L + 8L) % 8;
+		}
+	}
 
 	/**
 	 * Calculates the angle of sun and moon in the sky relative to a specified time (usually worldTime)
