@@ -49,7 +49,16 @@ public class TimeSyncCommand extends CommandBase
 	{
 		long time = noSee(sender.getEntityWorld().getWorldTime());
 		
-		sender.getEntityWorld().setWorldTime(time);
+		int days = (int) Math.floor((sender.getEntityWorld().getWorldTime() / 1728000L));
+		long days_ticks = days * 1728000L;
+		long currtime = sender.getEntityWorld().getWorldTime() - days_ticks;
+		
+		if (time > currtime) {
+			sender.getEntityWorld().setWorldTime(sender.getEntityWorld().getWorldTime() + (time - currtime));
+			return;
+		} else {
+			sender.getEntityWorld().setWorldTime(days_ticks + 1728000L + time);
+		}
 	}
 	
 	public static int DateEngine(int output) {
