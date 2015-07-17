@@ -22,7 +22,6 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 	@Override
 	public byte[] transform(String arg0, String arg1, byte[] arg2) {
 
-
 		if (arg0.equals("aqo")) {
 			if (debug) System.out.println("*********RealTime INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASM(arg0, arg2, true);
@@ -32,9 +31,6 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 			if (debug) System.out.println("*********RealTime INSIDE WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASM(arg0, arg2, false);
 		}
-
-
-
 
 		return arg2;
 	}

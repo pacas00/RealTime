@@ -41,7 +41,7 @@ def mavenpass = System.getenv("maven_pass") ?: "1"
 def mavenuser = System.getenv("maven_user") ?: "1"
 
 minecraft {
-    version = "1.7.10-10.13.0.1199"
+    version = "1.7.10-10.13.1.1226"
     assetDir = "eclipse/assets"
 }
 processResources
