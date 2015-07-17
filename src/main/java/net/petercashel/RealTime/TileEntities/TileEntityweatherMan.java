@@ -1,4 +1,4 @@
-package net.petercashel.RealTime;
+package net.petercashel.RealTime.TileEntities;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.petercashel.RealTime.mod_RealTime;
 
 public class TileEntityweatherMan extends TileEntity {
 	

@@ -17,34 +17,40 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class RealTimeClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 	
-	private static boolean debug = false;
+	private static boolean debug = true;
 
 	@Override
 	public byte[] transform(String arg0, String arg1, byte[] arg2) {
 
 		if (arg0.equals("aqo")) {
 			if (debug) System.out.println("*********RealTime INSIDE OBFUSCATED WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
-			return patchClassASM(arg0, arg2, true);
+			return patchClassASMWorldProvider(arg0, arg2, true);
 		}
 
 		if (arg0.equals("net.minecraft.world.WorldProvider")) {
 			if (debug) System.out.println("*********RealTime INSIDE WORLDPROVIDER TRANSFORMER ABOUT TO PATCH: " + arg0);
-			return patchClassASM(arg0, arg2, false);
+			return patchClassASMWorldProvider(arg0, arg2, false);
 		}
 
 		return arg2;
 	}
 
-	public byte[] patchClassASM(String name, byte[] bytes, boolean obfuscated) {
+	//patchClassASM for WorldProvider. Specifically named due to upcoming expansion to properly support weather.
+	public byte[] patchClassASMWorldProvider(String name, byte[] bytes, boolean obfuscated) {
 
 		String targetMethodName = "";
 		String targetMethodName2 = "";
 
 		if(obfuscated == true) {
+			// These are obfuscated method names. These are pulled from modding resources inside the MCP.
+			// It's quite normal for obfuscated method names to have the same name so long as the parameters
+			// are different.
+			
 			//calculateCelestialAngle
 			targetMethodName ="a";
 			//getMoonPhase
-			targetMethodName2 ="a"; // b or d _ not sure...  ..? a?
+			targetMethodName2 ="a";
+			
 		} else {
 			targetMethodName ="calculateCelestialAngle";
 			targetMethodName2 ="getMoonPhase";
@@ -57,7 +63,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 
 
 
-		//Now we loop over all of the methods declared inside the Explosion class until we get to the targetMethodName "doExplosionB"
+		//Now we loop over all of the methods declared inside the class until we get to the targetMethodName
 
 		// find method to inject into
 		Iterator<MethodNode> methods = classNode.methods.iterator();
@@ -66,6 +72,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 			MethodNode m = methods.next();
 			if (debug) System.out.println("*********RealTime Method Name: "+m.name + " Desc:" + m.desc);
 
+			// calculateCelestialAngle
 			if (m.name.equals(targetMethodName) && m.desc.equals("(JF)F")) {
 				if (debug) System.out.println("*********RealTime Inside target method!");
 
@@ -88,6 +95,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 				if (debug) System.out.println("RealTime Patching Complete!");
 			}
 
+			// getMoonPhase
 			if (m.name.equals(targetMethodName2) && m.desc.equals("(J)I")) {
 				if (debug) System.out.println("*********RealTime Inside target method!");
 

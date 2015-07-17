@@ -1,4 +1,4 @@
-package net.petercashel.RealTime;
+package net.petercashel.RealTime.Blocks;
 
 import cpw.mods.fml.common.Loader;
 import net.minecraft.block.Block;
@@ -7,10 +7,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.petercashel.RealTime.TileEntities.TileEntityweatherMan;
 
 public class BlockweatherMan extends BlockContainer {
 
-	protected BlockweatherMan() {
+	public BlockweatherMan() {
 		super(Material.iron);
 		
 		setCreativeTab(CreativeTabs.tabRedstone);

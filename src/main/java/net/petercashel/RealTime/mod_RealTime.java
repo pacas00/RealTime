@@ -9,6 +9,8 @@ import net.minecraft.block.Block;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
+import net.petercashel.RealTime.Blocks.BlockweatherMan;
+import net.petercashel.RealTime.TileEntities.TileEntityweatherMan;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
