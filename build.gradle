@@ -32,13 +32,15 @@ apply plugin: 'java'
 //        }
 //    }
 
-def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
-version = "v1.0." + buildnumber.toString()
+def buildnumber = System.getenv("BUILD_NUMBER") ?: "0"
+version = "v1.1." + buildnumber.toString()
 group= "net.petercashel.RealTime" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "RealTime"
 
 def mavenpass = System.getenv("maven_pass") ?: "1"
 def mavenuser = System.getenv("maven_user") ?: "1"
+
+defaultTasks 'build'
 
 minecraft {
     version = "1.7.10-10.13.1.1226"
