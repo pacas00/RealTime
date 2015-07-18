@@ -37,5 +37,6 @@ Weather Underground is a registered trademark of The Weather Channel, LLC. both 
 	# These are for your location for weather and moon phases
 	
 --------------------------------------------------------------------
-
+<a href="http://www.wunderground.com/?apiref=248dadb7aa8e6c37">
 <img src="http://icons.wxug.com/logos/PNG/wundergroundLogo_4c_horz.png">
+</a>
