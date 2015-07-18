@@ -1,6 +1,7 @@
 RealTime + RealWeather
-Powered by Weather Underground
 -----------
+Powered by Weather Underground
+
 
 For Minecraft 1.7.10
 
