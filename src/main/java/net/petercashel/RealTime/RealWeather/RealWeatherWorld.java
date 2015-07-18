@@ -10,11 +10,6 @@ import net.petercashel.RealTime.mod_RealTime;
 
 public class RealWeatherWorld {
 
-	// changeState1 changes when weather does
-	// changeState2 is set to changeState1 when updates are sent to client
-	public static boolean changeState1 = false;
-	public static boolean changeState2 = false;
-
 	public static void updateWeatherBody(WorldProvider provider, WorldInfo worldInfo, Random rand, float thunderingStrength, float rainingStrength, float prevThunderingStrength, float prevRainingStrength, boolean isRemote) {
 
 		if (!mod_RealTime.RealWeatherEnabled) {
@@ -36,7 +31,6 @@ public class RealWeatherWorld {
 							RealWeather.createServerThread();
 						}
 						
-						
 						if (RealWeather.needsUpdate == true) {
 							worldInfo.setRaining(RealWeather.raining);
 							provider.worldObj.rainingStrength = RealWeather.rainStr;
@@ -47,15 +41,7 @@ public class RealWeatherWorld {
 							provider.worldObj.prevThunderingStrength = RealWeather.thundStrPrev;
 							worldInfo.setThunderTime(RealWeather.thundTime);
 
-							changeState1 = !changeState1;
 							RealWeather.needsUpdate = false;
-						}
-
-						if (changeState1 != changeState2) {
-							System.out.println("Sending weather update to clients");
-							//Send changes to client
-
-							changeState2 = changeState1;
 						}
 
 
@@ -167,6 +153,6 @@ public class RealWeatherWorld {
 	}
 
 	public static void SelfCallForLoading() {
-		changeState1 = true;
+		//Makes sure this class exists before world loads.
 	}
 }

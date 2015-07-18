@@ -68,8 +68,6 @@ public class RealWeather {
 
 	public static void processWeatherJSONServer() {
 		String s = weatherJSON;
-		System.out.println("Processing Weather Data!");
-		System.out.println(s);
 		processWeatherJSONClient(s);
 		//Send data to client
 		ByteBuf bb = buffer(8192);
@@ -264,10 +262,6 @@ public class RealWeather {
 			
 			JsonObject moongson = new JsonObject();
 			moongson = new GsonBuilder().create().fromJson(jsonMoon, JsonObject.class);
-			
-			System.out.println("Weather Data Recieved!");
-			System.out.println(moongson.toString());
-			System.out.println(weathergson.toString());
 			
 			JsonObject datagson = new JsonObject();
 			datagson.addProperty("MoonPhase", moongson.getAsJsonObject().getAsJsonObject("moon_phase").get("phaseofMoon").getAsString());

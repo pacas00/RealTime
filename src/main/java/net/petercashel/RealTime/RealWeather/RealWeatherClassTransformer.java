@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 
-	private static boolean debug = true;
+	private static boolean debug = false;
 	private static boolean debugTargetOnly = false;
 
 	// Static class to record all the names of classes, methods and fields for ASM
