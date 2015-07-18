@@ -19,18 +19,19 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 	
 	private static boolean debug = true;
+	private static boolean debugTargetOnly = true;
 	
 	// Static class to record all the names of classes, methods and fields for ASM
 	
 		//Class:
 		//World
 		static String World = "net.minecraft.world.World";
-		static String WorldOBF = "aqo999999999999999";
+		static String WorldOBF = "ahb";
 		
 		//Methods:
 		//updateWeatherBody
-		static String updateWeatherBody  = "updateWeatherBody";
-		static String updateWeatherBodyOBF  = "a9a9a9a9a9a9a9a9a9a";
+		static String updateWeatherBody = "updateWeatherBody";
+		static String updateWeatherBodyOBF  = "updateWeatherBody"; // This may be forge added...
 		//Sig 
 		static String updateWeatherBodySig = "()V";
 		static String updateWeatherBodySigOBF = "()V";
@@ -97,7 +98,15 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 		while(methods.hasNext())
 		{
 			MethodNode m = methods.next();
-			if (debug) System.out.println("*********RealTime RealWeather Method Name: "+m.name + " Desc:" + m.desc);
+			if (debug) {
+				if (!debugTargetOnly) {
+					System.out.println("*********RealTime RealWeather Method Name: "+m.name + " Desc:" + m.desc);
+				} else {
+					if (m.desc.equals(targetMethodSig)) {
+						System.out.println("*********RealTime RealWeather Method Name: "+m.name + " Desc:" + m.desc);
+					}					
+				}				
+			}
 
 			// updateWeatherBody
 			if (m.name.equals(targetMethodName) && m.desc.equals(targetMethodSig)) {
