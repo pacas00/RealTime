@@ -23,14 +23,14 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 	// Static class to record all the names of classes, methods and fields for ASM
 	
 		//Class:
-		//WorldProvider
+		//World
 		static String World = "net.minecraft.world.World";
-		static String WorldOBF = "aqo";
+		static String WorldOBF = "aqo999999999999999";
 		
 		//Methods:
 		//updateWeatherBody
 		static String updateWeatherBody  = "updateWeatherBody";
-		static String updateWeatherBodyOBF  = "a";
+		static String updateWeatherBodyOBF  = "a9a9a9a9a9a9a9a9a9a";
 		//Sig 
 		static String updateWeatherBodySig = "()V";
 		static String updateWeatherBodySigOBF = "()V";
