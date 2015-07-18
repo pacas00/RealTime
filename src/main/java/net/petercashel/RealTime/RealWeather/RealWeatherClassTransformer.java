@@ -42,25 +42,25 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 
 		if (arg0.equals(WorldOBF)) {
 			if (debug) System.out.println("*********RealTime RealWeather INSIDE OBFUSCATED WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
-			return patchClassASMWorldProvider(arg0, arg2, true);
+			return patchClassASMWorld(arg0, arg2, true);
 		}
 
 		if (arg0.equals(World)) {
 			if (debug) System.out.println("*********RealTime RealWeather INSIDE WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
-			return patchClassASMWorldProvider(arg0, arg2, false);
+			return patchClassASMWorld(arg0, arg2, false);
 		}
 
 		
 		if (arg0.equals("net.petercashel.RealTime.RealWeather.RealWeather")) {
 			if (debug) System.out.println("*********RealTime RealWeather INSIDE TRANSFORMER Dumping!: " + arg0);
-			return patchClassASMWorldProvider(arg0, arg2, false);
+			return patchClassASMWorld(arg0, arg2, false);
 		}
 		
 		return arg2;
 	}
 
 	//patchClassASM for WorldProvider. Specifically named due to upcoming expansion to properly support weather.
-	public byte[] patchClassASMWorldProvider(String name, byte[] bytes, boolean obfuscated) {
+	public byte[] patchClassASMWorld(String name, byte[] bytes, boolean obfuscated) {
 
 		String targetMethodName = "";
 		String targetMethodSig = "";
@@ -121,7 +121,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "prevRainingStrength", "F"));
 				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "isRemote", "Z"));
-				toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeather", "updateWeatherBody", calledSig, false));
+				toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "updateWeatherBody", calledSig, false));
 				toInject.add(new InsnNode(Opcodes.RETURN));
 
 				m.instructions.clear();

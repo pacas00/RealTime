@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import net.minecraft.client.Minecraft;
-import net.petercashel.RealTime.RealWeather.RealWeatherConst;
+import net.petercashel.RealTime.RealWeather.RealWeather;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
@@ -20,7 +20,7 @@ public class RealTime {
 	
 	public static int getMoonPhase(long par1) {
 		if (mod_RealTime.RealTimeEnabled) { //(int)(par1 / 1728000L % 8L + 8L) % 8
-			return RealWeatherConst.moon.ordinal();
+			return RealWeather.moon.ordinal();
 		} else {
 			return (int)(par1 / 24000L % 8L + 8L) % 8;
 		}

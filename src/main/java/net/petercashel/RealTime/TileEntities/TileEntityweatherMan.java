@@ -20,15 +20,7 @@ public class TileEntityweatherMan extends TileEntity {
 	
 	private int time = 0;
 	public void updateEntity() {
-		time++;
-		if (time == 20 && mod_RealTime.WeatherAPIKEY.isEmpty() == false && mod_RealTime.WeatherLocation.isEmpty() == false ) {
-			Thread weather = new WeatherTask(worldObj);
-			weather.start();
-		}
-		if (time > 12000) {
-			time = 0;
-		}
-		
+
 		
 	}
 	
@@ -41,7 +33,7 @@ public class TileEntityweatherMan extends TileEntity {
 		public void run() {
 	        URL url = null;
 			try {
-				url = new URL("http://api.worldweatheronline.com/free/v1/weather.ashx?key="+mod_RealTime.WeatherAPIKEY+"&num_of_days=1&q="+mod_RealTime.WeatherLocation+"&format=json");
+				url = new URL("http://api.worldweatheronline.com/free/v1/weather.ashx?key="+mod_RealTime.WeatherAPIKEY+"&num_of_days=1&q="+"&format=json");
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
 			}

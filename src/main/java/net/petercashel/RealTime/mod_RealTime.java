@@ -10,7 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
-import net.petercashel.RealTime.RealWeather.RealWeather;
+import net.petercashel.RealTime.RealWeather.RealWeatherWorld;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -33,6 +33,7 @@ public class mod_RealTime {
 	public static FMLEventChannel Channel;
 	public static FMLEventChannel ChannelConnect;
 	public static FMLEventChannel ChannelLogin;
+	public static FMLEventChannel ChannelWeather;
 
 
 	@SidedProxy(clientSide = "net.petercashel.RealTime.ClientProxy", serverSide = "net.petercashel.RealTime.CommonProxy")
@@ -122,7 +123,7 @@ public class mod_RealTime {
 			cfg.save();
 		}
 		FMLCommonHandler.instance().bus().register(new RealTimeEvents());
-		RealWeather.SelfCallForLoading();
+		RealWeatherWorld.SelfCallForLoading();
 
 	}
 
@@ -131,6 +132,7 @@ public class mod_RealTime {
 		Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTime");
 		ChannelConnect = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTimeConnect");
 		ChannelLogin = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTimeLogin");
+		ChannelWeather = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealWeather");
 		proxy.load();
 		RealTimeInit();
 
