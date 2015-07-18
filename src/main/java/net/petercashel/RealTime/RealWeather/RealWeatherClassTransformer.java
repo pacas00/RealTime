@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 
 	private static boolean debug = true;
-	private static boolean debugTargetOnly = true;
+	private static boolean debugTargetOnly = false;
 
 	// Static class to record all the names of classes, methods and fields for ASM
 
@@ -148,7 +148,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73003_n", "F")); //prevRainingStrength
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "isRemote", "Z"));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_72995_K", "Z")); //isRemote
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "updateWeatherBody", calledSig, false));
 					toInject.add(new InsnNode(Opcodes.RETURN));
 				}
