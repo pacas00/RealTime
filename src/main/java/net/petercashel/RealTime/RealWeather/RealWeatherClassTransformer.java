@@ -17,25 +17,25 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 
 public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
-	
+
 	private static boolean debug = true;
 	private static boolean debugTargetOnly = true;
-	
+
 	// Static class to record all the names of classes, methods and fields for ASM
-	
-		//Class:
-		//World
-		static String World = "net.minecraft.world.World";
-		static String WorldOBF = "ahb";
-		
-		//Methods:
-		//updateWeatherBody
-		static String updateWeatherBody = "updateWeatherBody";
-		static String updateWeatherBodyOBF  = "updateWeatherBody"; // This may be forge added...
-		//Sig 
-		static String updateWeatherBodySig = "()V";
-		static String updateWeatherBodySigOBF = "()V";
-	
+
+	//Class:
+	//World
+	static String World = "net.minecraft.world.World";
+	static String WorldOBF = "ahb";
+
+	//Methods:
+	//updateWeatherBody
+	static String updateWeatherBody = "updateWeatherBody";
+	static String updateWeatherBodyOBF  = "updateWeatherBody"; // This may be forge added...
+	//Sig 
+	static String updateWeatherBodySig = "()V";
+	static String updateWeatherBodySigOBF = "()V";
+
 	// Static class to record all the names of classes, methods and fields for ASM 
 
 	@Override
@@ -51,12 +51,12 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 			return patchClassASMWorld(arg0, arg2, false);
 		}
 
-		
-		if (arg0.equals("net.petercashel.RealTime.RealWeather.RealWeather")) {
+
+		if (arg0.equals("net.petercashel.RealTime.RealWeather.RealWeatherWorld")) {
 			if (debug) System.out.println("*********RealTime RealWeather INSIDE TRANSFORMER Dumping!: " + arg0);
 			return patchClassASMWorld(arg0, arg2, false);
 		}
-		
+
 		return arg2;
 	}
 
@@ -72,12 +72,12 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 			// These are pulled from modding resources inside the MCP.
 			// It's quite normal for obfuscated method names to have the same name
 			// so long as the parameters are different.
-			
+
 			//updateWeatherBody
 			targetMethodName = updateWeatherBodyOBF;
 			targetMethodSig = updateWeatherBodySigOBF;
 			calledSig = "(Lnet/minecraft/world/WorldProvider;Lnet/minecraft/world/storage/WorldInfo;Ljava/util/Random;FFFFZ)V";
-			
+
 		} else {
 			targetMethodName = updateWeatherBody;
 			targetMethodSig = updateWeatherBodySig;
@@ -113,26 +113,45 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 				if (debug) System.out.println("*********RealTime RealWeather Inside target method!");
 
 				InsnList toInject = new InsnList();
-
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "provider", "Lnet/minecraft/world/WorldProvider;"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "worldInfo", "Lnet/minecraft/world/storage/WorldInfo;"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "rand", "Ljava/util/Random;"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "thunderingStrength", "F"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "rainingStrength", "F"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "prevThunderingStrength", "F"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "prevRainingStrength", "F"));
-				toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "isRemote", "Z"));
-				toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "updateWeatherBody", calledSig, false));
-				toInject.add(new InsnNode(Opcodes.RETURN));
-
+				if (!obfuscated) {
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "provider", "Lnet/minecraft/world/WorldProvider;"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "worldInfo", "Lnet/minecraft/world/storage/WorldInfo;"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "rand", "Ljava/util/Random;"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "thunderingStrength", "F"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "rainingStrength", "F"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "prevThunderingStrength", "F"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "prevRainingStrength", "F"));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/World", "isRemote", "Z"));
+					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "updateWeatherBody", calledSig, false));
+					toInject.add(new InsnNode(Opcodes.RETURN));
+				} else {
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73011_w", "Laqo;")); //provider
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_72986_A", "Lays;")); //worldInfo
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73012_v", "Ljava/util/Random;")); //rand
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73017_q", "F")); //thunderingStrength
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73004_o", "F")); //rainingStrength
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73018_p", "F")); //prevThunderingStrength
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73003_n", "F")); //prevRainingStrength
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "isRemote", "Z"));
+					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "updateWeatherBody", calledSig, false));
+					toInject.add(new InsnNode(Opcodes.RETURN));
+				}
 				m.instructions.clear();
 				m.instructions.add(toInject);
 
