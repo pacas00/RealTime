@@ -2,6 +2,7 @@ package net.petercashel.RealTime;
 
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Level;
 
@@ -9,8 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
-import net.petercashel.RealTime.Blocks.BlockweatherMan;
-import net.petercashel.RealTime.TileEntities.TileEntityweatherMan;
+import net.petercashel.RealTime.RealWeather.RealWeather;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -43,11 +43,13 @@ public class mod_RealTime {
 	//RealTime Stuff
 
 	public static boolean RealTimeEnabled;
+	public static boolean RealWeatherEnabled = false;
 	public static String tzName;
 	public static int RealTimeZone = 0;
 	public static int RealTimeZoneOriginal;
 	public static String WeatherAPIKEY = "";
-	public static String WeatherLocation = "";
+	public static String WeatherLocationCity = "";
+	public static String WeatherLocationCountry = "";
 	public static boolean EnforceSync = false;
 	
 	public static float ServerTime = 0F;
@@ -57,8 +59,6 @@ public class mod_RealTime {
 	// Used server side to not spam the client with packets from this mod.
 	public static int ServerNoSpamCounter = 0;
 	
-	public static Block weatherMan;
-
 	private TimeSyncCommand TimeSyncCMD;
 
 	private MinecraftServer server;
@@ -66,9 +66,8 @@ public class mod_RealTime {
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
-		GameRegistry.registerTileEntity(TileEntityweatherMan.class, "weatherManTE");
-		System.out.println("[RealTime] Loaded.");
-		FMLLog.log("RealTime", Level.INFO, "Mod Has Loaded [RealTime]");
+		System.out.println("[RealTime+RealWeather] Loaded.");
+		FMLLog.log("RealTime+RealWeather", Level.INFO, "Mod Has Loaded [RealTime]");
 	}
 
 
@@ -102,7 +101,7 @@ public class mod_RealTime {
 			Calendar cal = Calendar.getInstance();
 			TimeZone tz = TimeZone.getDefault();
 			
-			tzName = cfg.get(CATEGORY_GENERAL,"RealTime_TimeZone_Name", cal.getTimeZone().getDisplayName()).getString();;
+			tzName = cfg.get(CATEGORY_GENERAL,"RealTime_TimeZone_Name", displayTimeZone(cal.getTimeZone())).getString();;
 			
 			tz = TimeZone.getTimeZone(tzName);
 			cal.setTimeZone(tz);
@@ -110,9 +109,12 @@ public class mod_RealTime {
 			RealTimeZone = cal.getTimeZone().getRawOffset();
 			
 			RealTimeZoneOriginal = RealTimeZone;
-
-			WeatherAPIKEY = cfg.get(CATEGORY_GENERAL,"WeatherAPIKEY", "").getString();
-			WeatherLocation = cfg.get(CATEGORY_GENERAL,"WeatherLocation", "").getString();
+			
+			
+			RealWeatherEnabled = cfg.get(CATEGORY_GENERAL,"RealWeatherEnabled", false).getBoolean(false);
+			WeatherAPIKEY = cfg.get(CATEGORY_GENERAL,"RealWeather_APIKEY", "").getString();
+			WeatherLocationCity = cfg.get(CATEGORY_GENERAL,"RealWeather_City", "").getString();
+			WeatherLocationCountry = cfg.get(CATEGORY_GENERAL,"RealWeather_Country", "").getString();
 			
 		} catch (Exception e) {
 			System.out.println("[RealTime] Error Loading Config");
@@ -120,9 +122,7 @@ public class mod_RealTime {
 			cfg.save();
 		}
 		FMLCommonHandler.instance().bus().register(new RealTimeEvents());
-		
-		weatherMan = new BlockweatherMan();
-		GameRegistry.registerBlock(weatherMan, "weatherMan");
+		RealWeather.SelfCallForLoading();
 
 	}
 
@@ -142,6 +142,22 @@ public class mod_RealTime {
 		//Not Needing to do anything yet
 	}
 
+	private static String displayTimeZone(TimeZone tz) {
 
+		long hours = TimeUnit.MILLISECONDS.toHours(tz.getRawOffset());
+	    long minutes = TimeUnit.MILLISECONDS.toMinutes(tz.getRawOffset()) 
+	                              - TimeUnit.HOURS.toMinutes(hours);
+	    // avoid -4:-30 issue
+	    minutes = Math.abs(minutes);
 
+	    String result = "";
+	    if (hours > 0) {
+	        result = String.format("GMT+%d:%02d", hours, minutes);
+	    } else {
+	        result = String.format("GMT%d:%02d", hours, minutes);
+	    }
+
+	    return result;
+
+	}
 }

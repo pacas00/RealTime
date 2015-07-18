@@ -1,12 +1,13 @@
-RealTime
+RealTime + RealWeather
+Powered by Weather Underground
 -----------
 
 For Minecraft 1.7.10
 
 <a href='http://jenkins.petercashel.net/job/RealTime/'><img src='http://jenkins.petercashel.net/buildStatus/icon?job=RealTime'></a>
 
-
-
+This mod uses weather data from Weather Underground. Neither myself or this mod is affiliated with Weather Underground.
+Weather Underground is a registered trademark of The Weather Channel, LLC. both in the United States and internationally. The Weather Underground Logo is a trademark of Weather Underground, LLC.
 
 
 ----------
@@ -19,26 +20,21 @@ For Minecraft 1.7.10
     B:RealTimeEnabled=false
 	
 	//TimeZone
-    S:RealTime_TimeZone_Name=Australian Eastern Standard Time (Queensland)    # Set's to your Time zone by default
-    # Supports 'GMT-4' time zone format as well as 'Australia/Brisbane' and 'Australian Eastern Standard Time (Queensland)'
+    S:RealTime_TimeZone_Name=     #Defaults to local timezone
+    # Supports 'GMT-4' time zone format as well as 'Australia/Brisbane'
 	# See TZ column in the following page if unsure. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 	
 	//Weather (WIP)
-	S:WeatherAPIKEY=
-	# Put your Free Local Weather API key here to enable the weatherMan block.
+	B:RealWeatherEnabled=false
+	
+	S:RealWeather_APIKEY=
+	# Put your Weather Underground API key here. Required for RealWeather
     
 	
-    S:WeatherLocation=
-    # Set your desired weather location. Valid Formats Are
-    • City Name
-    • City Name, State (US only)
-    • City Name, State, Country
-    • City Name, Country
-    • IP Address
-    • UK or Canada Postal Code or US Zipcode
-    • Latitude and longitude in in decimal degrees (XX.XXX,XX.XXX)
+    S:RealWeather_City=
+	S:RealWeather_Country=
+	# These are for your location for weather and moon phases
 	
 --------------------------------------------------------------------
-<a href="http://www.worldweatheronline.com/free-weather-feed.aspx" title="Get a Free local weather content provider" target="_blank">Free Local Weather API key from World Weather Online</a>
 
-Powered by <a href="http://www.worldweatheronline.com/" title="Free local weather content provider" target="_blank">World Weather Online</a>
+<img src="http://icons.wxug.com/logos/PNG/wundergroundLogo_4c_horz.png">
