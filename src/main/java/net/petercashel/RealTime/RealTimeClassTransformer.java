@@ -17,7 +17,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class RealTimeClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 	
-	final static boolean isDebugEnvironment = Boolean.getBoolean(System.getenv("JavaDebugEnvironment"));
+	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getenv("JavaDebugEnvironment"));
 	
 	// Static class to record all the names of classes, methods and fields for ASM
 	

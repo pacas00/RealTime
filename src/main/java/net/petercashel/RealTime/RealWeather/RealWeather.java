@@ -24,7 +24,7 @@ public class RealWeather {
 
 	//Stores the last received weather data
 	public static String weatherJSON = "";
-	final static boolean isDebugEnvironment = Boolean.getBoolean(System.getenv("JavaDebugEnvironment"));
+	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getenv("JavaDebugEnvironment"));
 	
 	public static boolean needsUpdate = false;
 	public static boolean needsUpdateClient = false;
