@@ -10,6 +10,8 @@ import net.petercashel.RealTime.mod_RealTime;
 
 public class RealWeatherWorld {
 
+	final static boolean isDebugEnvironment = Boolean.getBoolean(System.getenv("JavaDebugEnvironment"));
+	
 	public static void updateWeatherBody(WorldProvider provider, WorldInfo worldInfo, Random rand, float thunderingStrength, float rainingStrength, float prevThunderingStrength, float prevRainingStrength, boolean isRemote) {
 
 		if (!mod_RealTime.RealWeatherEnabled) {
@@ -60,6 +62,7 @@ public class RealWeatherWorld {
 						if (RealWeather.needsUpdateClient) {
 							RealWeather.needsUpdateClient = false;
 							RealWeather.doClientUpdate();
+							if (isDebugEnvironment) System.out.println("Client is performing weather update");
 						}
 
 					}

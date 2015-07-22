@@ -24,6 +24,7 @@ public class RealWeather {
 
 	//Stores the last received weather data
 	public static String weatherJSON = "";
+	final static boolean isDebugEnvironment = Boolean.getBoolean(System.getenv("JavaDebugEnvironment"));
 	
 	public static boolean needsUpdate = false;
 	public static boolean needsUpdateClient = false;
@@ -69,6 +70,7 @@ public class RealWeather {
 	public static void processWeatherJSONServer() {
 		String s = weatherJSON;
 		processWeatherJSONClient(s);
+		if (isDebugEnvironment) System.out.println(s);
 		//Send data to client
 		ByteBuf bb = buffer(8192);
 		bb.writeInt(s.getBytes(StandardCharsets.US_ASCII).length);
@@ -204,7 +206,7 @@ public class RealWeather {
 	static class ServerWeatherThread implements Runnable {
 		@Override
 		public void run() {
-			
+			if (isDebugEnvironment) System.out.println("Server is performing weather update");
 			//Get weather data
 			URL urlWeather = null;
 			try {
@@ -283,6 +285,7 @@ public class RealWeather {
 
 		@Override
 		public void run() {
+			if (isDebugEnvironment) System.out.println("Client weather data: " + RealWeather.weatherJSON);
 			RealWeather.processWeatherJSONClient(RealWeather.weatherJSON);
 		}
 		

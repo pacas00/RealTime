@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 
-	private static boolean debug = false;
+	final static boolean isDebugEnvironment = Boolean.getBoolean(System.getenv("JavaDebugEnvironment"));
 	private static boolean debugTargetOnly = false;
 
 	// Static class to record all the names of classes, methods and fields for ASM
@@ -42,18 +42,18 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 	public byte[] transform(String arg0, String arg1, byte[] arg2) {
 
 		if (arg0.equals(WorldOBF)) {
-			if (debug) System.out.println("*********RealTime RealWeather INSIDE OBFUSCATED WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
+			if (isDebugEnvironment) System.out.println("*********RealTime RealWeather INSIDE OBFUSCATED WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASMWorld(arg0, arg2, true);
 		}
 
 		if (arg0.equals(World)) {
-			if (debug) System.out.println("*********RealTime RealWeather INSIDE WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
+			if (isDebugEnvironment) System.out.println("*********RealTime RealWeather INSIDE WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
 			return patchClassASMWorld(arg0, arg2, false);
 		}
 
 
 		if (arg0.equals("net.petercashel.RealTime.RealWeather.RealWeatherWorld")) {
-			if (debug) System.out.println("*********RealTime RealWeather INSIDE TRANSFORMER Dumping!: " + arg0);
+			if (isDebugEnvironment) System.out.println("*********RealTime RealWeather INSIDE TRANSFORMER Dumping!: " + arg0);
 			return patchClassASMWorld(arg0, arg2, false);
 		}
 
@@ -98,7 +98,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 		while(methods.hasNext())
 		{
 			MethodNode m = methods.next();
-			if (debug) {
+			if (isDebugEnvironment) {
 				if (!debugTargetOnly) {
 					System.out.println("*********RealTime RealWeather Method Name: "+m.name + " Desc:" + m.desc);
 				} else {
@@ -110,7 +110,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 
 			// updateWeatherBody
 			if (m.name.equals(targetMethodName) && m.desc.equals(targetMethodSig)) {
-				if (debug) System.out.println("*********RealTime RealWeather Inside target method!");
+				if (isDebugEnvironment) System.out.println("*********RealTime RealWeather Inside target method!");
 
 				InsnList toInject = new InsnList();
 				if (!obfuscated) {
@@ -156,7 +156,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 				m.instructions.add(toInject);
 
 
-				if (debug) System.out.println("RealTime RealWeather Patching Complete!");
+				if (isDebugEnvironment) System.out.println("RealTime RealWeather Patching Complete!");
 			}
 
 
