@@ -212,9 +212,9 @@ public class RealWeather {
 						"http://api.wunderground.com/api/"
 						+ mod_RealTime.WeatherAPIKEY
 						+ "/conditions/q/"
-						+ mod_RealTime.WeatherLocationCountry
+						+ (mod_RealTime.WeatherLocationCountry).replace(" ", "%20")
 						+ "/"
-						+ mod_RealTime.WeatherLocationCity
+						+ (mod_RealTime.WeatherLocationCity).replace(" ", "%20")
 						+ ".json");
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
@@ -241,9 +241,9 @@ public class RealWeather {
 						"http://api.wunderground.com/api/"
 						+ mod_RealTime.WeatherAPIKEY
 						+ "/astronomy/q/"
-						+ mod_RealTime.WeatherLocationCountry
+						+ (mod_RealTime.WeatherLocationCountry).replace(" ", "%20")
 						+ "/"
-						+ mod_RealTime.WeatherLocationCity
+						+ (mod_RealTime.WeatherLocationCity).replace(" ", "%20")
 						+ ".json");
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
