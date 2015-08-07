@@ -26,7 +26,7 @@ public class ClientWeatherPacketHandler {
 			bytes = new byte[length];
 			bbis.read(bytes, 0, length);
 			json = new String(bytes, StandardCharsets.US_ASCII);
-			RealWeather.weatherJSON = json;
+			RealWeather.weatherJSONClient = json;
 			RealWeather.needsUpdateClient = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

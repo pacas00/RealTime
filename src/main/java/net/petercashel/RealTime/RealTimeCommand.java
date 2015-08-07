@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.TimeZone;
 
+import org.apache.logging.log4j.Level;
+
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -13,11 +16,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
 
-public class TimeSyncCommand extends CommandBase
+public class RealTimeCommand extends CommandBase
 {
 	private mod_RealTime mod_RealTime;
 
-	public TimeSyncCommand(mod_RealTime mod_RealTime) {
+	public RealTimeCommand(mod_RealTime mod_RealTime) {
 		super();
 		this.mod_RealTime = mod_RealTime;
 	}
@@ -25,13 +28,13 @@ public class TimeSyncCommand extends CommandBase
 
 	public String getCommandName()
 	{
-		return "timesync";
+		return "RealTime";
 	}
 
 
 	public String getCommandUsage(ICommandSender icommandsender)
 	{
-		return "commands.timesync.usage";
+		return "commands.RealTime.usage";
 	}
 
 
@@ -92,7 +95,7 @@ public class TimeSyncCommand extends CommandBase
 		
 		var4 = (int)((t*m) % l);
 		
-		System.out.println("Var4 " + var4);
+		FMLLog.log("RealTime", Level.INFO, "Var4 " + var4);
 		return var4;
 	}
 

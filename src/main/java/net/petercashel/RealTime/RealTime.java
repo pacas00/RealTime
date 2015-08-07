@@ -6,23 +6,123 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.petercashel.RealTime.RealWeather.RealWeather;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import static io.netty.buffer.Unpooled.*;
 
 
 public class RealTime {
 	public static float WorldTime;
-
+	public static float SunAngle = 0.5F;
 	
 	public static int getMoonPhase(long par1) {
 		if (mod_RealTime.RealTimeEnabled) { //(int)(par1 / 1728000L % 8L + 8L) % 8
-			return RealWeather.moon.ordinal();
+			if (!mod_RealTime.RealWeatherEnabled)
+				return (int)(par1 / 1728000L % 8L + 8L) % 8;
+			else
+				return RealWeather.WeatherData.moon.ordinal();
 		} else {
 			return (int)(par1 / 24000L % 8L + 8L) % 8;
+		}
+	}
+	
+	//Lighting Brightness
+	public static float getSunBrightnessFactor(float p_72971_1_, World world) {
+		if (mod_RealTime.RealTimeEnabled) {
+			//Modded Code
+			
+			float f1 = world.getCelestialAngle(p_72971_1_);
+	        float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+
+	        if (f2 < 0.0F)
+	        {
+	            f2 = 0.0F;
+	        }
+
+	        if (f2 > 1.0F)
+	        {
+	            f2 = 1.0F;
+	        }
+
+	        f2 = 1.0F - f2;
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72971_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
+	        return f2 * 0.8F + 0.2F;
+	        
+		} else {
+			//Vanilla
+			float f1 = world.getCelestialAngle(p_72971_1_);
+	        float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+
+	        if (f2 < 0.0F)
+	        {
+	            f2 = 0.0F;
+	        }
+
+	        if (f2 > 1.0F)
+	        {
+	            f2 = 1.0F;
+	        }
+
+	        f2 = 1.0F - f2;
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72971_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
+	        return f2 * 0.8F + 0.2F;
+		}
+	}
+	
+	//Rendered Brightness
+	public static float getSunBrightnessBody(float p_72967_1_, World world) {
+		if (mod_RealTime.RealTimeEnabled) {
+			//Modded Code
+			
+			float f1 = world.getCelestialAngle(p_72967_1_);
+	        float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F);
+
+	        if (f2 < 0.0F)
+	        {
+	            f2 = 0.0F;
+	        }
+
+	        if (f2 > 1.0F)
+	        {
+	            f2 = 1.0F;
+	        }
+
+	        f2 = 1.0F - f2;
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72967_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
+	        
+	        
+	        
+	        return f2;
+		} else {
+			//Vanilla
+			float f1 = world.getCelestialAngle(p_72967_1_);
+	        float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F);
+
+	        if (f2 < 0.0F)
+	        {
+	            f2 = 0.0F;
+	        }
+
+	        if (f2 > 1.0F)
+	        {
+	            f2 = 1.0F;
+	        }
+
+	        f2 = 1.0F - f2;
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72967_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
+	        return f2;
 		}
 	}
 
@@ -30,26 +130,27 @@ public class RealTime {
 	 * Calculates the angle of sun and moon in the sky relative to a specified time (usually worldTime)
 	 * Or the system clock time with sunrise at 6am and sunset at 6pm.
 	 */
-	public static float calculateRealTime(long par1, float par3)
+	public static float calculateCelestialAngle(long par1, float par3)
 	{
 		// par1 (long) is the total number of ticks for all days
 		// par3 (float) is the percent of the current day?
-		//System.out.println(par1);
-		//System.out.println(par3);
+		//FMLLog.log("RealTime", Level.INFO, par1);
+		//FMLLog.log("RealTime", Level.INFO, par3);
 
 		if (mod_RealTime.RealTimeEnabled) {
 			if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
 
 				float Time = TimeCalculator(par1, par3);
+				SunAngle = Time;
 				if (Time > WorldTime) {
 					if ((Time - WorldTime) > 25F) {
 						mod_RealTime.ServerNoSpamCounter = 501;
-						System.out.println("Time was too Big " + Time + " "  + WorldTime);
+						FMLLog.log("RealTime", Level.INFO, "Time was too Big " + Time + " "  + WorldTime);
 					}					
 				} else {
 					if ((WorldTime - Time) > 25F) {
 						mod_RealTime.ServerNoSpamCounter = 501;
-						System.out.println("WorldTime was too Big " + WorldTime + " "  + Time);
+						FMLLog.log("RealTime", Level.INFO, "WorldTime was too Big " + WorldTime + " "  + Time);
 					}
 				}
 				WorldTime = Time;
@@ -65,10 +166,11 @@ public class RealTime {
 					mod_RealTime.Channel.sendToAll(pkt);
 					mod_RealTime.ServerNoSpamCounter = 0;
 				}
-
+				
 				return Time;
 			} else {
 				if (mod_RealTime.ClientTimeEnabled) {
+					SunAngle = mod_RealTime.ClientTime;
 					return mod_RealTime.ClientTime;
 
 				} else {
@@ -165,7 +267,12 @@ public class RealTime {
 		float var6 = var5;
 		var5 = 1.0F - (float)((Math.cos((double)var5 * Math.PI) + 1.0D) / 2.0D);
 		var5 = var6 + (var5 - var6) / 3.0F;
+		
+		if (var5 < 0F || var5 > 1F) {
+			FMLLog.log("RealTime", Level.INFO, "INVALID ANGLE CALCULATED " + var5);
+		}
 		return var5;
+		
 		
 		
 	}

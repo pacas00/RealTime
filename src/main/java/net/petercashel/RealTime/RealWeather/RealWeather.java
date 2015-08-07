@@ -12,18 +12,27 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.logging.log4j.Level;
+
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import io.netty.buffer.ByteBuf;
 import net.petercashel.RealTime.mod_RealTime;
+import net.petercashel.RealTime.RealWeather.RealWeather.moonPhase;
 
 // Holds weather data for RealTime and RealWeather
 public class RealWeather {
 
 	//Stores the last received weather data
 	public static String weatherJSON = "";
+	
+	//Client sent data
+	public static String weatherJSONClient = "";
+	
 	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getenv("JavaDebugEnvironment"));
 	
 	public static boolean needsUpdate = false;
@@ -31,29 +40,9 @@ public class RealWeather {
 
 	public static boolean threadStartedServer = false;
 
-
-	//Weather Values
-	public static moonPhase moon = moonPhase.Full_Moon;
-
-	public static boolean raining = false;
-	public static boolean thunder = false;
-
-	public static float rainStr = 0.0f;
-	public static float rainStrPrev = 0.0f;
-	public static float thundStr = 0.0f;
-	public static float thundStrPrev = 0.0f;
-
-	public static int rainTime = 0;
-	public static int thundTime = 0;	
-
-	//Rains
-	public static float norain = 0.0f;
-	public static float vrylightrain = 0.2f;
-	public static float lightrain = 0.35f;
-	public static float mediumrain = 0.8f;
-	public static float heavyrain = 1.2f;
-	public static float stormrain = 2.0f;
-
+	//Weather Data class (for Serials)
+	public static WeatherData WeatherData = new WeatherData();
+	
 
 	public static enum moonPhase {
 		Full_Moon(0), Waxing_Gibbus(1), First_Quarter(2), Waxing_Cresent(3), New_Moon(4), Waning_Cresent(5), Last_Quarter(6), Waning_Gibbus(7);
@@ -62,25 +51,41 @@ public class RealWeather {
 		private moonPhase(int value) {
 			this.value = value;
 		}
+		
+		public moonPhase set(int value) {
+			this.value = value;
+			return this;
+		}
 	}
 
-
-
-
-	public static void processWeatherJSONServer() {
-		String s = weatherJSON;
-		processWeatherJSONClient(s);
-		if (isDebugEnvironment) System.out.println(s);
+	public static void processWeatherServer() {
+		processWeatherJSONServer(weatherJSON);
+		if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, weatherJSON);
+		needsUpdate = true;	
+		sendWeatherToClient();
+	}
+	
+	public static void sendWeatherToClient() {
+		Gson gson = new Gson();
+		weatherJSONClient = gson.toJson(RealWeather.WeatherData);
+		if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "sending weather data: " + RealWeather.weatherJSONClient);
 		//Send data to client
 		ByteBuf bb = buffer(8192);
-		bb.writeInt(s.getBytes(StandardCharsets.US_ASCII).length);
-		bb.writeBytes(s.getBytes(StandardCharsets.US_ASCII));
+		bb.writeInt(weatherJSONClient.getBytes(StandardCharsets.US_ASCII).length);
+		bb.writeBytes(weatherJSONClient.getBytes(StandardCharsets.US_ASCII));
 		FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealWeather");
 		mod_RealTime.ChannelWeather.sendToAll(pkt);
-		needsUpdate = true;	
 	}
 
 	public static void processWeatherJSONClient(String s) {
+		Gson gson = new Gson();
+		RealWeather.WeatherData = gson.fromJson(s, WeatherData.class);
+		RealWeather.WeatherData.RestoreMoon();
+		
+	}
+	
+	
+	public static void processWeatherJSONServer(String s) {
 		JsonObject gson = new JsonObject();
 		gson = new GsonBuilder().create().fromJson(s, JsonObject.class);
 		
@@ -89,75 +94,76 @@ public class RealWeather {
 		
 		// MOON LOGIC!
 		if (moon.contains("Full")) {
-			RealWeather.moon = moonPhase.Full_Moon;
+			RealWeather.WeatherData.moon = moonPhase.Full_Moon;
 		} else if (moon.contains("Blue")) {
-			RealWeather.moon = moonPhase.Full_Moon;
+			RealWeather.WeatherData.moon = moonPhase.Full_Moon;
 		} else if (moon.contains("New")) {
-			RealWeather.moon = moonPhase.New_Moon;
+			RealWeather.WeatherData.moon = moonPhase.New_Moon;
 		} else if (moon.contains("First")) {
-			RealWeather.moon = moonPhase.First_Quarter;
+			RealWeather.WeatherData.moon = moonPhase.First_Quarter;
 		} else if (moon.contains("Last")) {
-			RealWeather.moon = moonPhase.Last_Quarter;
+			RealWeather.WeatherData.moon = moonPhase.Last_Quarter;
 		} else {
 			if (moon.contains("Waxing")) {
 				if (moon.contains("Crescent")) {
-					RealWeather.moon = moonPhase.Waxing_Cresent;
+					RealWeather.WeatherData.moon = moonPhase.Waxing_Cresent;
 				} else if (moon.contains("Gibbus")) {
-					RealWeather.moon = moonPhase.Waxing_Gibbus;
+					RealWeather.WeatherData.moon = moonPhase.Waxing_Gibbus;
 				}
 			} else if (moon.contains("Waning")) {
 				if (moon.contains("Crescent")) {
-					RealWeather.moon = moonPhase.Waning_Cresent;
+					RealWeather.WeatherData.moon = moonPhase.Waning_Cresent;
 				} else if (moon.contains("Gibbus")) {
-					RealWeather.moon = moonPhase.Waning_Gibbus;
+					RealWeather.WeatherData.moon = moonPhase.Waning_Gibbus;
 				}
 			}
 		}
+		RealWeather.WeatherData.StoreMoon();
 		
 		//Weather Logic //weather //
 		if (weather.contains("Rain") || weather.contains("Showers")) {
 			if (weather.contains("Chance")) {
-				RealWeather.raining = false;
-				RealWeather.rainStr = RealWeather.norain;
+				RealWeather.WeatherData.raining = false;
+				RealWeather.WeatherData.rainStr = RealWeather.WeatherData.norain;
 			} else {
 				if (weather.contains("Light")) {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.lightrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.lightrain;
 				} 
 				else if (weather.contains("Medium")) {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.mediumrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.mediumrain;
 				} 
 				else if (weather.contains("Heavy")) {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.heavyrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.heavyrain;
 				} else {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.mediumrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.mediumrain;
 				}
 			}
 		} else {
-			RealWeather.raining = false;
-			RealWeather.rainStr = RealWeather.norain;
+			RealWeather.WeatherData.raining = false;
+			RealWeather.WeatherData.rainStr = RealWeather.WeatherData.norain;
 		}
 		
 		if (weather.contains("Storm") || weather.contains("storm")) {
 			if (weather.contains("Chance")) {
 			} else {
 				if (weather.contains("Light")) {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.lightrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.lightrain;
 				} 
 				else if (weather.contains("Medium")) {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.mediumrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.mediumrain;
 				} 
 				else if (weather.contains("Heavy")) {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.heavyrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.heavyrain;
 				} else {
-					RealWeather.raining = true;
-					RealWeather.rainStr = RealWeather.heavyrain;
+					RealWeather.WeatherData.raining = true;
+					RealWeather.WeatherData.rainStr = RealWeather.WeatherData.heavyrain;
 				}
 			}
 		}
@@ -166,24 +172,24 @@ public class RealWeather {
 			if (weather.contains("Chance")) {
 			} else {
 				if (weather.contains("Light")) {
-					RealWeather.thunder = true;
-					RealWeather.thundStr = 0.25f;
+					RealWeather.WeatherData.thunder = true;
+					RealWeather.WeatherData.thundStr = 0.25f;
 				} 
 				else if (weather.contains("Medium")) {
-					RealWeather.thunder = true;
-					RealWeather.thundStr = 0.5f;
+					RealWeather.WeatherData.thunder = true;
+					RealWeather.WeatherData.thundStr = 0.5f;
 				} 
 				else if (weather.contains("Heavy")) {
-					RealWeather.thunder = true;
-					RealWeather.thundStr = 1.0f;
+					RealWeather.WeatherData.thunder = true;
+					RealWeather.WeatherData.thundStr = 1.0f;
 				} else {
-					RealWeather.thunder = true;
-					RealWeather.thundStr = 0.5f;
+					RealWeather.WeatherData.thunder = true;
+					RealWeather.WeatherData.thundStr = 0.5f;
 				}
 			}
 		} else {
-			RealWeather.thunder = false;
-			RealWeather.thundStr = 0f;
+			RealWeather.WeatherData.thunder = false;
+			RealWeather.WeatherData.thundStr = 0f;
 		}
 		
 	}
@@ -206,7 +212,7 @@ public class RealWeather {
 	static class ServerWeatherThread implements Runnable {
 		@Override
 		public void run() {
-			if (isDebugEnvironment) System.out.println("Server is performing weather update");
+			if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "Server is performing weather update");
 			//Get weather data
 			URL urlWeather = null;
 			try {
@@ -271,7 +277,7 @@ public class RealWeather {
 			datagson.addProperty("Weathericon", weathergson.getAsJsonObject().getAsJsonObject("current_observation").get("icon").getAsString());
 			
 			RealWeather.weatherJSON = datagson.toString();
-			RealWeather.processWeatherJSONServer();
+			RealWeather.processWeatherServer();
 			try {
 				Thread.sleep(1000 * 60 * 15);
 			} catch (InterruptedException e) {
@@ -285,8 +291,8 @@ public class RealWeather {
 
 		@Override
 		public void run() {
-			if (isDebugEnvironment) System.out.println("Client weather data: " + RealWeather.weatherJSON);
-			RealWeather.processWeatherJSONClient(RealWeather.weatherJSON);
+			if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "Client weather data: " + RealWeather.weatherJSONClient);
+			RealWeather.processWeatherJSONClient(RealWeather.weatherJSONClient);
 		}
 		
 	}

@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
+import net.petercashel.RealTime.RealWeather.RealWeather;
+import net.petercashel.RealTime.RealWeather.RealWeatherCommand;
 import net.petercashel.RealTime.RealWeather.RealWeatherWorld;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -51,7 +53,8 @@ public class mod_RealTime {
 	public static String WeatherAPIKEY = "";
 	public static String WeatherLocationCity = "";
 	public static String WeatherLocationCountry = "";
-	public static boolean EnforceSync = false;
+	
+	public static boolean EnforceSync = true;
 	
 	public static float ServerTime = 0F;
 	public static float ClientTime = 3000F;
@@ -60,7 +63,8 @@ public class mod_RealTime {
 	// Used server side to not spam the client with packets from this mod.
 	public static int ServerNoSpamCounter = 0;
 	
-	private TimeSyncCommand TimeSyncCMD;
+	private RealTimeCommand RealTimeCMD;
+	private RealWeatherCommand RealWeatherCMD;
 
 	private MinecraftServer server;
 	
@@ -87,17 +91,19 @@ public class mod_RealTime {
 		
 		server = MinecraftServer.getServer();
 		ServerCommandManager commands = (ServerCommandManager) server.getCommandManager();
-		TimeSyncCMD = new TimeSyncCommand(this);
-		commands.registerCommand(TimeSyncCMD);
+		RealTimeCMD = new RealTimeCommand(this);
+		commands.registerCommand(RealTimeCMD);
+		RealWeatherCMD = new RealWeatherCommand(this);
+		commands.registerCommand(RealWeatherCMD);
 	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		
 		Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
 		try {
 			cfg.load();
 			RealTimeEnabled = cfg.get(CATEGORY_GENERAL,"RealTimeEnabled", false).getBoolean(false);
-			EnforceSync = cfg.get(CATEGORY_GENERAL,"EnforceSync", false).getBoolean(false);
 			
 			Calendar cal = Calendar.getInstance();
 			TimeZone tz = TimeZone.getDefault();
