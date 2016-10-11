@@ -19,7 +19,7 @@ public class ClientPacketHandlerLogin {
 
 		try {
 			mod_RealTime.RealTimeZone = bbis.readInt();
-			mod_RealTime.ClientTimeEnabled = bbis.readBoolean();
+			mod_RealTime.RealTimeEnabled = bbis.readBoolean();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
