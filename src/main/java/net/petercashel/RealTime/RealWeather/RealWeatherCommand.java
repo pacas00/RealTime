@@ -8,12 +8,12 @@ import java.util.TimeZone;
 
 import org.apache.logging.log4j.Level;
 
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
 import net.petercashel.RealTime.mod_RealTime;
 
@@ -26,38 +26,21 @@ public class RealWeatherCommand extends CommandBase
 		this.mod_RealTime = mod_RealTime;
 	}
 
-
 	public String getCommandName()
 	{
 		return "RealWeather";
 	}
-
 
 	public String getCommandUsage(ICommandSender icommandsender)
 	{
 		return "commands.RealWeather.usage";
 	}
 
-
 	public int getRequiredPermissionLevel()
 	{
 		return 2;
 	}
 
-	public void processCommand(ICommandSender sender, String[] args)
-	{
-		int commandIndex = 0;
-
-		FMLLog.log("RealWeather", Level.INFO, args[commandIndex]);
-
-		switch (args[commandIndex]) {
-
-		case "set": { 
-			setWeather(sender, args);
-			}
-		default: { }
-		}
-	}
 
 	public void setWeather(ICommandSender sender, String[] args) {
 		int commandIndex = 1;
@@ -102,8 +85,7 @@ public class RealWeatherCommand extends CommandBase
 			RealWeather.WeatherData.snowing = false;
 			RealWeather.WeatherData.freezing = false;
 			RealWeather.WeatherData.rainStr = RealWeather.WeatherData.norain;
-			RealWeather.WeatherData.thundStr = RealWeather.WeatherData.halfThund;
-			
+			RealWeather.WeatherData.thundStr = RealWeather.WeatherData.halfThund;			
 			RealWeather.needsUpdate = true;
 		} else if (args[commandIndex].equalsIgnoreCase("thunderstorm")) {
 			RealWeather.WeatherData.thunder = true;
@@ -149,6 +131,23 @@ public class RealWeatherCommand extends CommandBase
 			
 		}
 		RealWeather.sendWeatherToClient();
+	}
+
+
+	@Override
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+		// TODO Auto-generated method stub
+		int commandIndex = 0;
+
+		FMLLog.log("RealWeather", Level.INFO, args[commandIndex]);
+
+		switch (args[commandIndex]) {
+
+		case "set": { 
+			setWeather(sender, args);
+			}
+		default: { }
+		}
 	}
 
 

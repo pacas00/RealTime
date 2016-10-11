@@ -9,10 +9,11 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientCustomPacketEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ServerCustomPacketEvent;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientCustomPacketEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerCustomPacketEvent;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 public class ServerPacketHandlerConnect {
 
@@ -21,7 +22,7 @@ public class ServerPacketHandlerConnect {
 		ByteBuf bb = buffer(128);
 		bb.writeInt(mod_RealTime.RealTimeZone);
 		bb.writeBoolean(mod_RealTime.RealTimeEnabled);
-		FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealTimeLogin");
+		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeLogin");
 		mod_RealTime.ChannelLogin.sendToAll(pkt);
 		mod_RealTime.ServerNoSpamCounter = 490;
 

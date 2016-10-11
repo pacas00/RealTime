@@ -9,21 +9,22 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.petercashel.RealTime.RealWeather.RealWeather;
 import net.petercashel.RealTime.RealWeather.RealWeatherCommand;
 import net.petercashel.RealTime.RealWeather.RealWeatherWorld;
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.FMLEventChannel;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.network.FMLEventChannel;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 
 @Mod(modid = "mod_realtime", name = "RealTime")
@@ -87,14 +88,14 @@ public class mod_RealTime {
 	@EventHandler
 	public void ServerStarting(FMLServerStartingEvent event) 
 	{
-		mod_RealTime.ChannelConnect.register(new ServerPacketHandlerConnect());
+		mod_RealTime.ChannelConnect.register(new ServerPacketHandlerConnect()); //Sends packet on channel RealTimeLogin
 		
-		server = MinecraftServer.getServer();
-		ServerCommandManager commands = (ServerCommandManager) server.getCommandManager();
-		RealTimeCMD = new RealTimeCommand(this);
-		commands.registerCommand(RealTimeCMD);
+		server = event.getServer();
+
+		RealTimeCMD = new RealTimeCommand();
+		event.registerServerCommand(RealTimeCMD);
 		RealWeatherCMD = new RealWeatherCommand(this);
-		commands.registerCommand(RealWeatherCMD);
+		event.registerServerCommand(RealWeatherCMD);
 	}
 
 	@EventHandler
@@ -128,17 +129,17 @@ public class mod_RealTime {
 		} finally {
 			cfg.save();
 		}
-		FMLCommonHandler.instance().bus().register(new RealTimeEvents());
+		MinecraftForge.EVENT_BUS.register(new RealTimeEvents());
 		RealWeatherWorld.SelfCallForLoading();
 
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTime");
-		ChannelConnect = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTimeConnect");
-		ChannelLogin = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTimeLogin");
-		ChannelWeather = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealWeather");
+		Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTime"); // RealTime / L165
+		ChannelConnect = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTimeConnect"); //(RealTimeEvents) Client sends on connect to server, trigger ServerPacketHandlerConnect
+		ChannelLogin = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealTimeLogin"); //Sent by server- ServerPacketHandlerConnect to client ClientPacketHandlerLogin
+		ChannelWeather = NetworkRegistry.INSTANCE.newEventDrivenChannel("RealWeather"); // RealWeather L82
 		proxy.load();
 		RealTimeInit();
 

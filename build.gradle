@@ -1,18 +1,32 @@
+// For those who want the bleeding edge
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+repositories {
+  maven {
+    // location of the maven that hosts JEI files
+    url "http://dvs1.progwml6.com/files/maven"
+  }
+}
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    // Load config.  It shall from now be referenced as simply config or project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
 }
 
 configurations.all {
@@ -24,23 +38,40 @@ configurations.all {
     }
 }
 
-apply plugin: 'forge'
 apply plugin: 'java'
 
 def buildnumber = System.getenv("BUILD_NUMBER") ?: "1"
-version = "v1.1." + buildnumber.toString()
-group= "net.petercashel.RealTime" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "RealTime"
+
+version = "${config.version.major}.${config.version.minor}.${config.version.patch}" + "." + buildnumber.toString()
+group= "${config.version.modid_base}.${config.version.modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "${config.version.modid}"
+
+sourceCompatibility = targetCompatibility = "1.7" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.7"
+}
 
 defaultTasks 'build'
 
 minecraft {
-    version = "1.7.10-10.13.4.1490-1.7.10"
-	runDir = "eclipse"
+    version = "${config.version.minecraft}-${config.version.forge}"
+    runDir = "run"
+    
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not allways work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings = "${config.version.mappings}"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 processResources
 {
+	// this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -61,12 +92,6 @@ jar {
     manifest {
         attributes("FMLCorePlugin": "net.petercashel.RealTime.RealTimeFMLLoadingPlugin", "FMLCorePluginContainsFMLMod": "RealTime")
     }
-}
-// Add in a source jar for people, should they desire to download such a thing
-task sourceJar(type: Jar) {
-	from sourceSets.main.allSource
-	classifier = 'src'
-    version = "${project.minecraft.version}-${project.version}"
 }
 
 // Add in an mcp named jar, for those who wish to run in a development environment (assuming mcp naming matches)

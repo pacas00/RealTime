@@ -13,20 +13,24 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.common.FMLLog;
 
 
 public class RealTimeClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
-
-	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getenv("JavaDebugEnvironment"));
+	//-DJavaDebugEnvironment="true"
+	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getProperty("JavaDebugEnvironment"));
+	
+	
+	//mcp-notch.srg
+	//USERFOLDER\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_snapshot\20160826\1.10.2\srgs
+	
 
 	// Static class to record all the names of classes, methods and fields for ASM
 
 	//Class:
 	//WorldProvider
 	static String WorldProvider = "net.minecraft.world.WorldProvider";
-	static String WorldProviderOBF = "aqo";
+	static String WorldProviderOBF = "atl";
 
 	//Methods:
 	//calculateCelestialAngle
@@ -45,7 +49,7 @@ public class RealTimeClassTransformer implements net.minecraft.launchwrapper.ICl
 	//Class:
 	//World
 	static String World = "net.minecraft.world.World";
-	static String WorldOBF = "ahb";
+	static String WorldOBF = "aid";
 
 	//Methods:
 	//getSunBrightnessFactor

@@ -11,6 +11,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.logging.log4j.Level;
 
@@ -18,8 +20,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import io.netty.buffer.ByteBuf;
 import net.petercashel.RealTime.mod_RealTime;
 import net.petercashel.RealTime.RealWeather.RealWeather.moonPhase;
@@ -33,7 +36,7 @@ public class RealWeather {
 	//Client sent data
 	public static String weatherJSONClient = "";
 	
-	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getenv("JavaDebugEnvironment"));
+	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getProperty("JavaDebugEnvironment"));
 	
 	public static boolean needsUpdate = false;
 	public static boolean needsUpdateClient = false;
@@ -42,6 +45,8 @@ public class RealWeather {
 
 	//Weather Data class (for Serials)
 	public static WeatherData WeatherData = new WeatherData();
+
+	public static Timer timer;
 	
 
 	public static enum moonPhase {
@@ -73,7 +78,7 @@ public class RealWeather {
 		ByteBuf bb = buffer(8192);
 		bb.writeInt(weatherJSONClient.getBytes(StandardCharsets.US_ASCII).length);
 		bb.writeBytes(weatherJSONClient.getBytes(StandardCharsets.US_ASCII));
-		FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealWeather");
+		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealWeather");
 		mod_RealTime.ChannelWeather.sendToAll(pkt);
 	}
 
@@ -203,13 +208,14 @@ public class RealWeather {
 	}
 
 	public static void createServerThread() {
-		Thread t = new Thread(new ServerWeatherThread());
-		t.setDaemon(true);//success is here now
-		t.start();
+		timer = new Timer("RealWeatherServerThread", true);
 		
+		ServerWeatherThread task = new ServerWeatherThread();
+		
+		timer.scheduleAtFixedRate(task, 0, 1000 * 60 * 15);		
 	}
 	
-	static class ServerWeatherThread implements Runnable {
+	static class ServerWeatherThread extends TimerTask implements Runnable {
 		@Override
 		public void run() {
 			if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "Server is performing weather update");
@@ -277,13 +283,7 @@ public class RealWeather {
 			datagson.addProperty("Weathericon", weathergson.getAsJsonObject().getAsJsonObject("current_observation").get("icon").getAsString());
 			
 			RealWeather.weatherJSON = datagson.toString();
-			RealWeather.processWeatherServer();
-			try {
-				Thread.sleep(1000 * 60 * 15);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
+			RealWeather.processWeatherServer();			
 		}				
 	}
 	

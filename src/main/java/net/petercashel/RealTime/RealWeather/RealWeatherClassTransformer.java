@@ -14,13 +14,12 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.fml.common.FMLLog;
 
 
 public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.IClassTransformer {
 
-	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getenv("JavaDebugEnvironment"));
+	final static boolean isDebugEnvironment = Boolean.parseBoolean(System.getProperty("JavaDebugEnvironment"));
 	private static boolean debugTargetOnly = false;
 
 	// Static record all the names of classes, methods and fields for ASM
@@ -28,7 +27,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 	//Class:
 	//World
 	static String World = "net.minecraft.world.World";
-	static String WorldOBF = "ahb";
+	static String WorldOBF = "aid";
 
 	//Methods:
 	//updateWeatherBody
@@ -44,8 +43,8 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 	static String canSnowAtBody = "canSnowAtBody";
 	static String canSnowAtBodyOBF  = canSnowAtBody; // Forge Added, obf matches deobf
 	//Sig 
-	static String canSnowAtBodySig = "(IIIZ)Z";
-	static String canSnowAtBodySigOBF = "(IIIZ)Z";
+	static String canSnowAtBodySig = "(Lnet/minecraft/util/math/BlockPos;Z)Z";
+	static String canSnowAtBodySigOBF = "(Lcm;Z)Z";
 
 
 	//Methods:
@@ -53,19 +52,19 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 	static String canBlockFreezeBody = "canBlockFreezeBody";
 	static String canBlockFreezeBodyOBF  = canBlockFreezeBody; // Forge Added, obf matches deobf
 	//Sig 
-	static String canBlockFreezeBodySig = "(IIIZ)Z";
-	static String canBlockFreezeBodySigOBF = "(IIIZ)Z";
+	static String canBlockFreezeBodySig = "(Lnet/minecraft/util/math/BlockPos;Z)Z";
+	static String canBlockFreezeBodySigOBF = "(Lcm;Z)Z";
 
 
 	//Class:
-	//BiomeGenBase
-	static String BiomeGenBase = "net.minecraft.world.biome.BiomeGenBase";
-	static String BiomeGenBaseOBF = "ahu";
+	//Biome
+	static String Biome = "net.minecraft.world.biome.Biome";
+	static String BiomeOBF = "aiq";
 
 	//Methods:
 	//getEnableSnow
 	static String getEnableSnow = "getEnableSnow";
-	static String getEnableSnowOBF = "func_76746_c";
+	static String getEnableSnowOBF = "c";
 	//Sig 
 	static String getEnableSnowSig = "()Z";
 	static String getEnableSnowSigOBF = "()Z";
@@ -86,14 +85,14 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 		}
 		
 		
-		if (arg0.equals(BiomeGenBaseOBF)) {
+		if (arg0.equals(BiomeOBF)) {
 			if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "*********RealTime RealWeather INSIDE OBFUSCATED WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
-			return patchClassASMBiomeGenBase(arg0, arg2, true);
+			return patchClassASMBiome(arg0, arg2, true);
 		}
 
-		if (arg0.equals(BiomeGenBase)) {
+		if (arg0.equals(Biome)) {
 			if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "*********RealTime RealWeather INSIDE WORLD TRANSFORMER ABOUT TO PATCH: " + arg0);
-			return patchClassASMBiomeGenBase(arg0, arg2, false);
+			return patchClassASMBiome(arg0, arg2, false);
 		}
 
 		return arg2;
@@ -131,12 +130,12 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 			//canSnowAtBody
 			targetMethodName2 = canSnowAtBodyOBF;
 			targetMethodSig2 = canSnowAtBodySigOBF;
-			calledSig2 = "(IIIZLnet/minecraft/world/World;)Z";
+			calledSig2 = "(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/world/World;)Z";
 
 			//canBlockFreezeBody
 			targetMethodName3 = canBlockFreezeBodyOBF;
 			targetMethodSig3 = canBlockFreezeBodySigOBF;
-			calledSig3 = "(IIIZLnet/minecraft/world/World;)Z";
+			calledSig3 = "(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/world/World;)Z";
 
 		} else {
 			targetMethodName = updateWeatherBody;
@@ -146,12 +145,12 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 			//canSnowAtBody
 			targetMethodName2 = canSnowAtBody;
 			targetMethodSig2 = canSnowAtBodySig;
-			calledSig2 = "(IIIZLnet/minecraft/world/World;)Z";
+			calledSig2 = "(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/world/World;)Z";
 
 			//canSnowAtBody
 			targetMethodName3 = canBlockFreezeBody;
 			targetMethodSig3 = canBlockFreezeBodySig;
-			calledSig3 = "(IIIZLnet/minecraft/world/World;)Z";
+			calledSig3 = "(Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/world/World;)Z";
 
 		}
 
@@ -205,21 +204,21 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 					toInject.add(new InsnNode(Opcodes.RETURN));
 				} else {
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73011_w", "Laqo;")); //provider
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_73011_w", "Latl;")); //provider
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_72986_A", "Lays;")); //worldInfo
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_72986_A", "Lbaa;")); //worldInfo
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73012_v", "Ljava/util/Random;")); //rand
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_73012_v", "Ljava/util/Random;")); //rand
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73017_q", "F")); //thunderingStrength
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_73017_q", "F")); //thunderingStrength
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73004_o", "F")); //rainingStrength
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_73004_o", "F")); //rainingStrength
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73018_p", "F")); //prevThunderingStrength
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_73018_p", "F")); //prevThunderingStrength
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_73003_n", "F")); //prevRainingStrength
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_73003_n", "F")); //prevRainingStrength
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, "ahb", "field_72995_K", "Z")); //isRemote
+					toInject.add(new FieldInsnNode(Opcodes.GETFIELD, WorldOBF, "field_72995_K", "Z")); //isRemote
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "updateWeatherBody", calledSig, false));
 					toInject.add(new InsnNode(Opcodes.RETURN));
 				}
@@ -237,20 +236,16 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 				InsnList toInject = new InsnList();
 				if (!obfuscated) {
 
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					toInject.add(new VarInsnNode(Opcodes.ILOAD, 2));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 4));
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "canSnowAtBody", calledSig2, false));
 					toInject.add(new InsnNode(Opcodes.IRETURN));
 				} else {
 
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					toInject.add(new VarInsnNode(Opcodes.ILOAD, 2));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 4));
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "canSnowAtBody", calledSig2, false));
@@ -269,20 +264,16 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 				InsnList toInject = new InsnList();
 				if (!obfuscated) {
 
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					toInject.add(new VarInsnNode(Opcodes.ILOAD, 2));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 4));
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "canBlockFreezeBody", calledSig3, false));
 					toInject.add(new InsnNode(Opcodes.IRETURN));
 				} else {
 
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					toInject.add(new VarInsnNode(Opcodes.ILOAD, 2));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					toInject.add(new VarInsnNode(Opcodes.ILOAD, 4));
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "canBlockFreezeBody", calledSig3, false));
@@ -303,8 +294,8 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 		return writer.toByteArray();
 	}
 
-	//patchClassASM for BiomeGenBase. Specifically named due to upcoming expansion to properly support weather.
-	public byte[] patchClassASMBiomeGenBase(String name, byte[] bytes, boolean obfuscated) {
+	//patchClassASM for Biome. Specifically named due to upcoming expansion to properly support weather.
+	public byte[] patchClassASMBiome(String name, byte[] bytes, boolean obfuscated) {
 
 		if (isDebugEnvironment) FMLLog.log("RealWeather", Level.INFO, "* " + bytes.length);
 		
@@ -318,12 +309,12 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 			//getEnableSnow
 			targetMethodName = getEnableSnowOBF;
 			targetMethodSig = getEnableSnowSigOBF;
-			calledSig = "(Lnet/minecraft/world/biome/BiomeGenBase;)Z";
+			calledSig = "(Lnet/minecraft/world/biome/Biome;)Z";
 		} else {
 			//getEnableSnow
 			targetMethodName = getEnableSnow;
 			targetMethodSig = getEnableSnowSig;
-			calledSig = "(Lnet/minecraft/world/biome/BiomeGenBase;)Z";
+			calledSig = "(Lnet/minecraft/world/biome/Biome;)Z";
 		}
 
 
@@ -357,6 +348,7 @@ public class RealWeatherClassTransformer implements net.minecraft.launchwrapper.
 
 				InsnList toInject = new InsnList();
 				if (!obfuscated) {
+
 					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/petercashel/RealTime/RealWeather/RealWeatherWorld", "getEnableSnow", calledSig, false));
 					toInject.add(new InsnNode(Opcodes.IRETURN));

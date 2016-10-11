@@ -8,12 +8,13 @@ import java.util.TimerTask;
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 public class RealTimeEvents {
 
@@ -27,13 +28,13 @@ public class RealTimeEvents {
 			public void run() {
 				ByteBuf bb = buffer(128);
 				bb.writeBoolean(true);
-				FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealTimeConnect");
+				FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeConnect");
 				mod_RealTime.ChannelConnect.sendToServer(pkt);
 			}
 		};
 
 		Timer ConnectPacketTimer = new Timer(true);
-		ConnectPacketTimer.schedule(ConnectPacket, 750);
+		ConnectPacketTimer.schedule(ConnectPacket, 10000);
 	}
 
 

@@ -9,13 +9,13 @@ import java.util.TimeZone;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.MathHelper;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.petercashel.RealTime.RealWeather.RealWeather;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import static io.netty.buffer.Unpooled.*;
 
 
@@ -54,7 +54,7 @@ public class RealTime {
 
 	        f2 = 1.0F - f2;
 	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72971_1_) * 5.0F) / 16.0D));
-	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
 	        return f2 * 0.8F + 0.2F;
 	        
 		} else {
@@ -74,7 +74,7 @@ public class RealTime {
 
 	        f2 = 1.0F - f2;
 	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72971_1_) * 5.0F) / 16.0D));
-	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
 	        return f2 * 0.8F + 0.2F;
 		}
 	}
@@ -99,7 +99,7 @@ public class RealTime {
 
 	        f2 = 1.0F - f2;
 	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72967_1_) * 5.0F) / 16.0D));
-	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
 	        
 	        
 	        
@@ -121,7 +121,7 @@ public class RealTime {
 
 	        f2 = 1.0F - f2;
 	        f2 = (float)((double)f2 * (1.0D - (double)(world.getRainStrength(p_72967_1_) * 5.0F) / 16.0D));
-	        f2 = (float)((double)f2 * (1.0D - (double)(world.getWeightedThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
+	        f2 = (float)((double)f2 * (1.0D - (double)(world.getThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
 	        return f2;
 		}
 	}
@@ -162,7 +162,7 @@ public class RealTime {
 					ByteBuf bb = buffer(128);
 					bb.clear();
 					bb.writeFloat(Time);
-					FMLProxyPacket pkt = new FMLProxyPacket(bb, "RealTime");
+					FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTime");
 					mod_RealTime.Channel.sendToAll(pkt);
 					mod_RealTime.ServerNoSpamCounter = 0;
 				}

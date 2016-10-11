@@ -1,7 +1,7 @@
 cd build\libs
 del /Q *
 cd ..\..
-gradlew.bat build --refresh-dependencies
+gradlew.bat setupCIWorkspace build --refresh-dependencies
 cd build\libs
-copy *universal.jar ..\..\Releases\1.7.10\10.13.4.1490\1.1.1\
+copy *universal.jar ..\..\Releases\1.10.2\12.18.1.2076\1.2.0\
 pause

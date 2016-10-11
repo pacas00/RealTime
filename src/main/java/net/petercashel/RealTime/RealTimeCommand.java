@@ -1,5 +1,7 @@
 package net.petercashel.RealTime;
 
+import static io.netty.buffer.Unpooled.buffer;
+
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -8,21 +10,22 @@ import java.util.TimeZone;
 
 import org.apache.logging.log4j.Level;
 
-import cpw.mods.fml.common.FMLLog;
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
 
 public class RealTimeCommand extends CommandBase
 {
-	private mod_RealTime mod_RealTime;
 
-	public RealTimeCommand(mod_RealTime mod_RealTime) {
+	public RealTimeCommand() {
 		super();
-		this.mod_RealTime = mod_RealTime;
 	}
 
 
@@ -43,10 +46,6 @@ public class RealTimeCommand extends CommandBase
 		return 2;
 	}
 
-	public void processCommand(ICommandSender sender, String[] args)
-	{
-		SyncTime(sender, args);
-	}
 
 	private void SyncTime(ICommandSender sender, String[] args)
 	{
@@ -127,5 +126,57 @@ public class RealTimeCommand extends CommandBase
 		case 5: return 23;
 		}
 		return 0;
+	}
+
+
+	@Override
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+		
+		if (args.length < 1) throw new WrongUsageException(("/RealTime {sync|offset}"));
+		for (int i = 0; i < args.length; i++) {
+			System.out.println(args[i]);
+		}
+
+		String cmd = args[0];
+
+		if (cmd.equalsIgnoreCase("sync")) SyncTime(sender, args);
+
+		if (cmd.equalsIgnoreCase("offset")) offset(server, sender, args);
+		
+		
+		if (cmd.equalsIgnoreCase("on")) ChangeState(server, sender, args, true);
+		if (cmd.equalsIgnoreCase("off")) ChangeState(server, sender, args, false);
+
+		
+	}
+
+
+	private void ChangeState(MinecraftServer server, ICommandSender sender, String[] args, boolean b) {
+		mod_RealTime.RealTimeEnabled = b;
+		
+		ByteBuf bb = buffer(128);
+		bb.writeInt(mod_RealTime.RealTimeZone);
+		bb.writeBoolean(mod_RealTime.RealTimeEnabled);
+		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeLogin");
+		mod_RealTime.ChannelLogin.sendToAll(pkt);
+		mod_RealTime.ServerNoSpamCounter = 490;
+		
+	}
+
+
+	private void offset(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+		if (args.length < 2) throw new WrongUsageException(("/RealTime offset {GMT+10:00|GMT-10:00}"));
+
+		String cmd = args[1];
+		
+		Calendar cal = Calendar.getInstance();
+		TimeZone tz = TimeZone.getDefault();
+		
+		tz = TimeZone.getTimeZone(cmd);
+		cal.setTimeZone(tz);
+		
+		net.petercashel.RealTime.mod_RealTime.RealTimeZone = cal.getTimeZone().getRawOffset();
+		
+		
 	}
 }

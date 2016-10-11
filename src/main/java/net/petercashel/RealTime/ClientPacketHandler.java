@@ -7,15 +7,15 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientCustomPacketEvent;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientCustomPacketEvent;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 public class ClientPacketHandler {
 
 	@SubscribeEvent
 	public void onClientPacket(ClientCustomPacketEvent event) {
-		ByteBufInputStream bbis = new ByteBufInputStream(event.packet.payload());
+		ByteBufInputStream bbis = new ByteBufInputStream(event.getPacket().payload());
 
 		//System.out.println("CLIENT GOT TIME PACKET!!");
 		
