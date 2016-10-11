@@ -178,5 +178,14 @@ public class RealTimeCommand extends CommandBase
 		net.petercashel.RealTime.mod_RealTime.RealTimeZone = cal.getTimeZone().getRawOffset();
 		
 		
+		ByteBuf bb = buffer(128);
+		bb.writeInt(mod_RealTime.RealTimeZone);
+		bb.writeBoolean(mod_RealTime.RealTimeEnabled);
+		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeLogin");
+		mod_RealTime.ChannelLogin.sendToAll(pkt);
+		mod_RealTime.ServerNoSpamCounter = 490;
+		
+		if (mod_RealTime.RealTimeEnabled) SyncTime(sender,args); 
+		
 	}
 }
