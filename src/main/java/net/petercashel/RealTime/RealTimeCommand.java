@@ -132,7 +132,7 @@ public class RealTimeCommand extends CommandBase
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		
-		if (args.length < 1) throw new WrongUsageException(("/RealTime {sync|offset}"));
+		if (args.length < 1) throw new WrongUsageException(("/RealTime {sync|offset|off|on}"));
 		for (int i = 0; i < args.length; i++) {
 			System.out.println(args[i]);
 		}
