@@ -22,7 +22,6 @@ public class RealTimeEvents {
 	public void onClientConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event)
 	{
 		mod_RealTime.ClientTimeEnabled = false;
-		mod_RealTime.RealTimeZone = mod_RealTime.RealTimeZoneOriginal;
 		TimerTask ConnectPacket = new TimerTask(){
 
 			public void run() {

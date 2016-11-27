@@ -49,8 +49,6 @@ public class mod_RealTime {
 	public static boolean RealTimeEnabled;
 	public static boolean RealWeatherEnabled = false;
 	public static String tzName;
-	public static int RealTimeZone = 0;
-	public static int RealTimeZoneOriginal;
 	public static String WeatherAPIKEY = "";
 	public static String WeatherLocationCity = "";
 	public static String WeatherLocationCountry = "";
@@ -81,7 +79,6 @@ public class mod_RealTime {
 	public void ServerStopped(FMLServerStoppingEvent event) 
 	{
 		mod_RealTime.ClientTimeEnabled = false;
-		mod_RealTime.RealTimeZone = mod_RealTime.RealTimeZoneOriginal;
 	}
 
 
@@ -113,11 +110,6 @@ public class mod_RealTime {
 			
 			tz = TimeZone.getTimeZone(tzName);
 			cal.setTimeZone(tz);
-			
-			RealTimeZone = cal.getTimeZone().getRawOffset();
-			
-			RealTimeZoneOriginal = RealTimeZone;
-			
 			
 			RealWeatherEnabled = cfg.get(CATEGORY_GENERAL,"RealWeatherEnabled", false).getBoolean(false);
 			WeatherAPIKEY = cfg.get(CATEGORY_GENERAL,"RealWeather_APIKEY", "").getString();

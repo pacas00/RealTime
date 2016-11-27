@@ -6,7 +6,10 @@ import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.TimeZone;
+
+import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.Level;
 
@@ -19,6 +22,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
 
 public class RealTimeCommand extends CommandBase
@@ -49,53 +53,12 @@ public class RealTimeCommand extends CommandBase
 
 	private void SyncTime(ICommandSender sender, String[] args)
 	{
-		long time = noSee(sender.getEntityWorld().getWorldTime());
-		
-		int days = (int) Math.floor((sender.getEntityWorld().getWorldTime() / 1728000L));
-		long days_ticks = days * 1728000L;
-		long currtime = sender.getEntityWorld().getWorldTime() - days_ticks;
-		
-		if (time > currtime) {
-			sender.getEntityWorld().setWorldTime(sender.getEntityWorld().getWorldTime() + (time - currtime));
-			return;
-		} else {
-			sender.getEntityWorld().setWorldTime(days_ticks + 1728000L + time);
-		}
+		mod_RealTime.ServerNoSpamCounter = 501;
 	}
 	
 	public static int DateEngine(int output) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(net.petercashel.RealTime.mod_RealTime.tzName));
 		return cal.get(output);
-	}
-
-	private long noSee(long n) {
-		int Hours = DateEngine(java.util.Calendar.HOUR_OF_DAY);
-		int Minutes = DateEngine(java.util.Calendar.MINUTE);
-		//		float total_sec = (Hours*60*60)+(Minutes*60); //0 - 86400 seconds 0-24000 ticks
-		//		return ((total_sec/86400)*24000);
-
-		// 1728000 = 1 REAL DAY
-		// 72000  = 1 hour
-		// 24000 = 20 min
-		// 1200 = 1 min
-
-
-		// From Offical Wiki
-		// Minecraft time is exactly 72 times faster than normal time.
-		// This can be easily calculated as the proportion 1440/20 = 72,
-		// as there are 1440 minutes in a real day (60 * 24)
-		// and 20 minutes in a full Minecraft day
-
-		long l = 1728000L;
-		int m = (HourSwitch(Hours) * 60) + Minutes;
-		int t = (int) (l / 1440);
-		
-		int var4;
-		
-		var4 = (int)((t*m) % l);
-		
-		FMLLog.log("RealTime", Level.INFO, "Var4 " + var4);
-		return var4;
 	}
 
 	private static int HourSwitch(int hours) {
@@ -133,9 +96,6 @@ public class RealTimeCommand extends CommandBase
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		
 		if (args.length < 1) throw new WrongUsageException(("/RealTime {sync|offset|off|on}"));
-		for (int i = 0; i < args.length; i++) {
-			System.out.println(args[i]);
-		}
 
 		String cmd = args[0];
 
@@ -149,13 +109,29 @@ public class RealTimeCommand extends CommandBase
 
 		
 	}
-
+	
+	/**
+	 * Adds the strings available in this command to the given list of tab completion options.
+	 */
+    @Override
+    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender par1ICommandSender, String[] args, @Nullable BlockPos pos)
+    {
+    	if (args.length == 2) {
+			if (args[0].equalsIgnoreCase("offset")) {
+				String[] subcmd = {"GMT","GMT+10","GMT-10","UTC"};
+				return args.length == 2 ? getListOfStringsMatchingLastWord(args, subcmd) : null;
+			}
+		} else if (args.length == 1) {
+			String[] subcmd = {"sync","offset","off","on"};
+			return args.length == 1 ? getListOfStringsMatchingLastWord(args, subcmd) : null;
+		}
+		return null;
+	}
 
 	private void ChangeState(MinecraftServer server, ICommandSender sender, String[] args, boolean b) {
 		mod_RealTime.RealTimeEnabled = b;
 		
 		ByteBuf bb = buffer(128);
-		bb.writeInt(mod_RealTime.RealTimeZone);
 		bb.writeBoolean(mod_RealTime.RealTimeEnabled);
 		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeLogin");
 		mod_RealTime.ChannelLogin.sendToAll(pkt);
@@ -167,19 +143,12 @@ public class RealTimeCommand extends CommandBase
 	private void offset(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length < 2) throw new WrongUsageException(("/RealTime offset {GMT+10:00|GMT-10:00}"));
 
-		String cmd = args[1];
+		mod_RealTime.tzName = args[1];
 		
-		Calendar cal = Calendar.getInstance();
-		TimeZone tz = TimeZone.getDefault();
-		
-		tz = TimeZone.getTimeZone(cmd);
-		cal.setTimeZone(tz);
-		
-		net.petercashel.RealTime.mod_RealTime.RealTimeZone = cal.getTimeZone().getRawOffset();
+		if (args[1].contains("gmt") || args[1].contains("utc")) mod_RealTime.tzName = args[1].toUpperCase();
 		
 		
 		ByteBuf bb = buffer(128);
-		bb.writeInt(mod_RealTime.RealTimeZone);
 		bb.writeBoolean(mod_RealTime.RealTimeEnabled);
 		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeLogin");
 		mod_RealTime.ChannelLogin.sendToAll(pkt);

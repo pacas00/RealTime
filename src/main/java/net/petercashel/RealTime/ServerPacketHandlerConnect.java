@@ -20,7 +20,6 @@ public class ServerPacketHandlerConnect {
 	@SubscribeEvent
 	public void onServerPacket(ServerCustomPacketEvent event) {
 		ByteBuf bb = buffer(128);
-		bb.writeInt(mod_RealTime.RealTimeZone);
 		bb.writeBoolean(mod_RealTime.RealTimeEnabled);
 		FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(bb), "RealTimeLogin");
 		mod_RealTime.ChannelLogin.sendToAll(pkt);

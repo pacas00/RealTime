@@ -278,9 +278,11 @@ public class RealWeather {
 			moongson = new GsonBuilder().create().fromJson(jsonMoon, JsonObject.class);
 			
 			JsonObject datagson = new JsonObject();
-			datagson.addProperty("MoonPhase", moongson.getAsJsonObject().getAsJsonObject("moon_phase").get("phaseofMoon").getAsString());
-			datagson.addProperty("Weather", weathergson.getAsJsonObject().getAsJsonObject("current_observation").get("weather").getAsString());
-			datagson.addProperty("Weathericon", weathergson.getAsJsonObject().getAsJsonObject("current_observation").get("icon").getAsString());
+try {
+	datagson.addProperty("MoonPhase", moongson.getAsJsonObject().getAsJsonObject("moon_phase").get("phaseofMoon").getAsString());
+	datagson.addProperty("Weather", weathergson.getAsJsonObject().getAsJsonObject("current_observation").get("weather").getAsString());
+	datagson.addProperty("Weathericon", weathergson.getAsJsonObject().getAsJsonObject("current_observation").get("icon").getAsString());
+} catch (NullPointerException ex) { return;}
 			
 			RealWeather.weatherJSON = datagson.toString();
 			RealWeather.processWeatherServer();			

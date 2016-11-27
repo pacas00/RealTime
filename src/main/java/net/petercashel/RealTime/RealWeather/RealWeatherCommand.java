@@ -1,29 +1,18 @@
 package net.petercashel.RealTime.RealWeather;
 
-import java.lang.ref.WeakReference;
-import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Hashtable;
-import java.util.TimeZone;
-
 import org.apache.logging.log4j.Level;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.DimensionManager;
 import net.petercashel.RealTime.mod_RealTime;
 
 public class RealWeatherCommand extends CommandBase
 {
-	private mod_RealTime mod_RealTime;
-
 	public RealWeatherCommand(mod_RealTime mod_RealTime) {
 		super();
-		this.mod_RealTime = mod_RealTime;
 	}
 
 	public String getCommandName()

@@ -3,6 +3,11 @@ package net.petercashel.RealTime;
 import io.netty.buffer.ByteBuf;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -223,8 +228,15 @@ public class RealTime {
 	}
 
 	public static float TimeCalculator(long par1, float par3) {
-		int Hours = DateEngine(java.util.Calendar.HOUR_OF_DAY);
-		int Minutes = DateEngine(java.util.Calendar.MINUTE);
+		Instant now = Instant.now();
+		ZonedDateTime z = now.atZone(ZoneId.of(mod_RealTime.tzName));
+		
+		int Hours = z.getHour();//DateEngine(java.util.Calendar.HOUR_OF_DAY);
+		int Minutes = z.getMinute();//DateEngine(java.util.Calendar.MINUTE);
+		
+
+
+		
 //		float total_sec = (Hours*60*60)+(Minutes*60); //0 - 86400 seconds 0-24000 ticks
 //		return ((total_sec/86400)*24000);
 		
